@@ -1,0 +1,49 @@
+{
+    "name": "cable8mm/waybill",
+    "description": "Library to generate PDF waybills",
+    "keywords": [
+        "cable8mm",
+        "waybill",
+        "pdf"
+    ],
+    "homepage": "https://github.com/cable8mm/waybill",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Samgu Lee",
+            "email": "cable8mm@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.20",
+        "phpunit/phpunit": "^9.0|^10.0|^11.0"
+    },
+    "suggest": {
+        "laravel/pint": "Provide a easy way to fit coding style"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cable8mm\\Waybill\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cable8mm\\Waybill\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "lint": "./vendor/bin/pint",
+        "apidoc": "rm -rf build; rm -rf cache; doctum.phar update doctum.php --output-format=github --no-ansi --no-progress -v;",
+        "opendoc": "open build/index.html"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
