@@ -27,6 +27,13 @@ class Faker
         return self::$instance;
     }
 
+    /**
+     * Get a online shopping company
+     *
+     * @return string the name of the online shopping company
+     *
+     * @example Faker::make()->site() '티몬', '쿠팡' or '11번가'
+     */
     public function site(): string
     {
         $sites = ['티몬', '쿠팡', '11번가'];
@@ -34,11 +41,17 @@ class Faker
         return $sites[array_rand($sites)];
     }
 
+    /**
+     * Get a barcode encoded string as image
+     *
+     * @return string a barcode encoded string as image
+     *
+     * @example Faker::make()->barcode() a encoded barcode image like 'data:image/png;base64,...'
+     */
     public function barcode(): string
     {
         $barcode = (new \Picqer\Barcode\Types\TypeCode128)->getBarcode(self::shared()->ean13());
 
-        // Output the barcode as HTML in the browser with a HTML Renderer
         $renderer = new \Picqer\Barcode\Renderers\PngRenderer;
 
         return 'data:image/png;base64,'.base64_encode($renderer->render($barcode));
@@ -46,6 +59,8 @@ class Faker
 
     /**
      * Faker factory method
+     *
+     * @example Faker::make() the instance of Faker
      */
     public static function make(): static
     {

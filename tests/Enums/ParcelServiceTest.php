@@ -17,6 +17,11 @@ final class ParcelServiceTest extends TestCase
         $this->assertEquals('CJ택배', ParcelService::Cj->value);
     }
 
+    public function test_factory_class(): void
+    {
+        $this->assertEquals(\Cable8mm\Waybill\Factories\CjFactory::class, ParcelService::Cj->factoryClass());
+    }
+
     public function test_stub(): void
     {
         $this->assertIsString(ParcelService::Cj->stub());
