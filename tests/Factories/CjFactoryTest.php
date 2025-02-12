@@ -11,7 +11,7 @@ final class CjFactoryTest extends TestCase
     {
         $factoryFields = CjFactory::make()->definition();
 
-        $this->assertEquals(14, count($factoryFields));
+        $this->assertEquals(15, count($factoryFields));
     }
 
     public function test_it_must_be_fit_with_a_definition_type(): void
