@@ -9,8 +9,6 @@ abstract class Factory
      */
     private array $state;
 
-    private string $stubContent;
-
     /**
      * Define a factory definition for online mall companies
      *
@@ -21,14 +19,12 @@ abstract class Factory
     /**
      * Create a new Factory instance
      *
-     * @param  int|array|null  $count  The new count
-     * @param  array  $state  The new state
+     * @param  ?array  $state  The new state
      * @return static The method returns a new Factory instance
      */
-    public static function make(array $state = []): static
+    public static function make(?array $state = []): static
     {
-        return (new static)
-            ->state($state);
+        return (new static)->state($state);
     }
 
     /**
