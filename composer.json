@@ -1,6 +1,6 @@
 {
     "name": "cable8mm/waybill",
-    "description": "Library to generate PDF waybills",
+    "description": "A lightweight PHP library for generating PDF waybills with ease.",
     "keywords": [
         "cable8mm",
         "waybill",
@@ -17,14 +17,24 @@
         }
     ],
     "require": {
-        "php": "^8.1"
+        "php": "^8.2",
+        "cable8mm/stub-template": "^1.0",
+        "fakerphp/faker": "^1.0",
+        "mbezhanov/faker-provider-collection": "^2.0",
+        "mpdf/mpdf": "^8.0|^8.1",
+        "picqer/php-barcode-generator": "^3.2"
     },
     "require-dev": {
         "laravel/pint": "^1.20",
         "phpunit/phpunit": "^9.0|^10.0|^11.0"
     },
     "suggest": {
-        "laravel/pint": "Provide a easy way to fit coding style"
+        "laravel/pint": "Provide a easy way to fit coding style",
+        "cable8mm/stub-template": "Provide template functions for stub files",
+        "fakerphp/faker": "Provide faker methods for factories",
+        "mbezhanov/faker-provider-collection": "Provide faker methods for companies and products",
+        "mpdf/mpdf": "Provide pdf functions for creating waybills",
+        "picqer/php-barcode-generator": "Provide barcode generator for creating waybills"
     },
     "autoload": {
         "psr-4": {

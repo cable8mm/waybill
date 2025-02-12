@@ -1,10 +1,13 @@
-# Very short description of the package
+# PDF Waybill Generator
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/cable8mm/waybill.svg?style=flat-square)](https://packagist.org/packages/cable8mm/waybill)
-[![Total Downloads](https://img.shields.io/packagist/dt/cable8mm/waybill.svg?style=flat-square)](https://packagist.org/packages/cable8mm/waybill)
-![GitHub Actions](https://github.com/cable8mm/waybill/actions/workflows/main.yml/badge.svg)
+![Coding Style Actions](https://github.com/cable8mm/waybill/actions/workflows/code-style.yml/badge.svg)
+![Run Tests Actions](https://github.com/cable8mm/waybill/actions/workflows/run-tests.yml/badge.svg)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cable8mm/waybill.svg)](https://packagist.org/packages/cable8mm/waybill)
+[![Packagist Dependency Version](https://img.shields.io/packagist/dependency-v/cable8mm/waybill/php?logo=PHP&logoColor=white&color=777BB4)](https://packagist.org/packages/cable8mm/waybill)
+[![Total Downloads](https://img.shields.io/packagist/dt/cable8mm/waybill.svg)](https://packagist.org/packages/cable8mm/waybill)
+[![Packagist Stars](https://img.shields.io/packagist/stars/cable8mm/waybill)](https://github.com/cable8mm/waybill/stargazers)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+A lightweight PHP library for generating PDF waybills with ease. This package allows developers to create and customize waybills in PDF format for courier and logistics services. It supports barcode generation, sender/receiver details, and customizable layouts. Perfect for automating shipping label creation in your e-commerce or logistics applications.
 
 ## Installation
 
@@ -16,9 +19,30 @@ composer require cable8mm/waybill
 
 ## Usage
 
+Save a waybill for pdf format:
+
 ```php
-// Usage description here
+use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Waybill;
+
+Waybill::of(ParcelService::Cj)
+    ->path(realpath(__DIR__.'/../dist'))
+    ->save('test.pdf');
 ```
+
+Get a waybill array:
+
+```php
+$orderSheet = Waybill::of(ParcelService::Cj)
+            ->toArray()
+```
+
+### How to customize
+
+If you want to add another parcel service like UPS, you would need to make `Enums` and `Factory` class, for example:
+
+1. Make `UpsFactory.php` into `src/Factories' folder.
+2. Make `Enum` element into `src/Enums` folder.
 
 ### Testing
 
