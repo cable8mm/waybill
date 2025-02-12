@@ -23,6 +23,6 @@ enum ParcelService: string
             throw new \Exception('Failed to read file: no existing stub');
         }
 
-        return file_get_contents($stubPath);
+        return $stubPath;
     }
 }
