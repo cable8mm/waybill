@@ -100,6 +100,8 @@ class Waybill
      *
      * @param  array  $state  The state of the waybills
      * @return static The method returns self instance
+     *
+     * @example $waybill = Waybill::of(ParcelService::Cj)->state(['total_printed_count' => '581'])->...
      */
     public function state(array $state): static
     {
@@ -113,6 +115,8 @@ class Waybill
      *
      * @param  string  $path  The path to save the waybills
      * @return static The method returns self instance
+     *
+     * @example $waybill = Waybill::of(ParcelService::Cj)->path(realpath(__DIR__.'/../dist'))->...
      */
     public function path(string $path): static
     {
@@ -125,6 +129,8 @@ class Waybill
      * Export the waybills data to array or CSV
      *
      * @return array The method returns the waybills data as array or CSV string
+     *
+     * @example $orderSheet = Waybill::of(ParcelService::Cj)->toArray();
      */
     public function toArray(): array
     {
@@ -135,6 +141,8 @@ class Waybill
      * Save the waybills data to PDF
      *
      * @param  string  $filename  A filename to create
+     *
+     * @example $waybill = Waybill::of(ParcelService::Cj)->path(realpath(__DIR__.'/../dist'))->save('test.pdf');
      */
     public function save(string $filename = 'waybills.pdf'): mixed
     {
@@ -154,6 +162,8 @@ class Waybill
      * Magic method to convert the waybills type to string
      *
      * @return string The method returns the waybills type as string
+     *
+     * @example echo Waybill::of(ParcelService::Cj)
      */
     public function __toString()
     {
@@ -165,6 +175,8 @@ class Waybill
      *
      * @param  ParcelService  $parcelService  The waybills type
      * @return static The method returns the OrderSheet instance
+     *
+     * @example Waybill::of(ParcelService::Cj)->...
      */
     public static function of(ParcelService $parcelService): static
     {
