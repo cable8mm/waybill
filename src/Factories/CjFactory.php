@@ -7,7 +7,7 @@ use Cable8mm\Waybill\Support\Faker;
 class CjFactory extends Factory
 {
     /**
-     * Define the order sheet's default state.
+     * Define the CJ parcel service's default state.
      *
      * @return array<string, mixed>
      */

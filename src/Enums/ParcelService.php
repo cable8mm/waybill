@@ -27,6 +27,8 @@ enum ParcelService: string
      * Get the stub filename with path for the factory class
      *
      * @return string The stub filename with path for the factory class
+     *
+     * @example ParcelService::Cj->stub()   __DIR__/stubs/Cj.stub
      */
     public function stub(): string
     {
