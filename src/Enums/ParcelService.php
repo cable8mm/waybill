@@ -4,8 +4,18 @@ namespace Cable8mm\Waybill\Enums;
 
 enum ParcelService: string
 {
+    /**
+     * Parcel Services
+     */
     case Cj = 'CJ택배';
 
+    /**
+     * Get the name of the factory class with namespace
+     *
+     * @return string The name of the factory class with namespace
+     *
+     * @example ParcelService::Cj->factoryClass() Cable8mm\Waybill\Factories\CjFactory
+     */
     public function factoryClass(): string
     {
         return match ($this) {
@@ -13,6 +23,11 @@ enum ParcelService: string
         };
     }
 
+    /**
+     * Get the stub filename with path for the factory class
+     *
+     * @return string The stub filename with path for the factory class
+     */
     public function stub(): string
     {
         $stubPath = match ($this) {
