@@ -42,4 +42,16 @@ enum ParcelService: string
 
         return $stubPath;
     }
+
+    /**
+     * Get area variables
+     *
+     * @return array[int,int,int,int] The area variables
+     */
+    public function templateArea(): array
+    {
+        return match ($this) {
+            self::Cj => [-40, -46, 285, 196],
+        };
+    }
 }
