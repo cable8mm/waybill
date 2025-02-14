@@ -4,6 +4,7 @@ namespace Cable8mm\Waybill;
 
 use Cable8mm\StubTemplate\Stub;
 use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Support\Mpdf as SupportMpdf;
 use Mpdf\Mpdf;
 
 /**
@@ -39,60 +40,7 @@ class Waybill
     ) {
         $this->parcelService = $parcelService;
 
-        $config = include __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'config.php';
-
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables)->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-        $tempDir = $defaultConfig['tempDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables)->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $configGlobal = [
-            'mode' => $config['mode'],
-            'format' => $config['format'],
-            'orientation' => $config['orientation'],
-            'default_font_size' => $config['default_font_size'],
-            'default_font' => $config['default_font'],
-            'margin_left' => $config['margin_left'],
-            'margin_right' => $config['margin_right'],
-            'margin_top' => $config['margin_top'],
-            'margin_bottom' => $config['margin_bottom'],
-            'margin_header' => $config['margin_header'],
-            'margin_footer' => $config['margin_footer'],
-            'fontDir' => array_merge($fontDirs, [
-                $config['custom_font_dir'],
-            ]),
-            'fontdata' => array_merge($fontData, $config['custom_font_data']),
-            'autoScriptToLang' => $config['auto_language_detection'],
-            'autoLangToFont' => $config['auto_language_detection'],
-            'tempDir' => ($config['temp_dir']) ?: $tempDir,
-        ];
-
-        $configMerge = array_merge($configGlobal, $config);
-
-        $this->mpdf = new Mpdf(array_merge($defaultConfig, $configMerge));
-
-        $this->mpdf->SetTitle($config['title']);
-        $this->mpdf->SetSubject($config['subject']);
-        $this->mpdf->SetAuthor($config['author']);
-        $this->mpdf->SetWatermarkText($config['watermark']);
-        $this->mpdf->SetWatermarkImage(
-            $config['watermark_image_path'],
-            $config['watermark_image_alpha'],
-            $config['watermark_image_size'],
-            $config['watermark_image_position']
-        );
-        $this->mpdf->SetDisplayMode($config['display_mode']);
-
-        $this->mpdf->PDFA = $config['pdfa'] ?: false;
-        $this->mpdf->PDFAauto = $config['pdfaauto'] ?: false;
-        $this->mpdf->showWatermarkText = $config['show_watermark'];
-        $this->mpdf->showWatermarkImage = $config['show_watermark_image'];
-        $this->mpdf->watermark_font = $config['watermark_font'];
-        $this->mpdf->watermarkTextAlpha = $config['watermark_text_alpha'];
-        // use active forms
-        $this->mpdf->useActiveForms = $config['use_active_forms'];
+        $this->mpdf = SupportMpdf::instance();
     }
 
     /**

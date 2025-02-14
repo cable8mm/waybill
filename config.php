@@ -2,7 +2,7 @@
 
 return [
     'mode' => 'utf-8',
-    'format' => 'C7',
+    'format' => [107.5, 206],
     'default_font_size' => '12',
     'default_font' => 'nanumbarungothic',
     'margin_left' => 10,
