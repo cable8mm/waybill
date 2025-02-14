@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.2.0 - 2025-02-14
+
+### What's Changed
+
+* Add `Slicer` class and tests by [@cable8mm](https://github.com/cable8mm) in https://github.com/cable8mm/waybill/pull/7
+
+**Full Changelog**: https://github.com/cable8mm/waybill/compare/v1.1.0...v1.2.0
+
 ## v1.1.0 - 2025-02-14
 
 ### What's Changed
