@@ -23,15 +23,24 @@ final class WaybillTest extends TestCase
         $this->assertStringContainsString(DIRECTORY_SEPARATOR.'dist', $path->getValue($waybill));
     }
 
-    public function test_it_export_to_array(): void
+    public function test_to_array(): void
     {
-        $orderSheet = Waybill::of(ParcelService::Cj)
+        $waybill = Waybill::of(ParcelService::Cj)
             ->toArray();
 
-        $this->assertIsArray($orderSheet);
+        $this->assertIsArray($waybill);
     }
 
-    public function test_it_export_to_file(): void
+    public function test_state(): void
+    {
+        $waybill = Waybill::of(ParcelService::Cj)
+            ->state(['6' => 'new value'])
+            ->toArray();
+
+        $this->assertSame('new value', $waybill['6']);
+    }
+
+    public function test_save(): void
     {
         $waybill = Waybill::of(ParcelService::Cj)
             ->path(realpath(__DIR__.'/../dist'))

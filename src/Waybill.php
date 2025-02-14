@@ -96,6 +96,31 @@ class Waybill
     }
 
     /**
+     * Run WriteHTML function
+     *
+     * @param  ?array<string,Tvalue>  $args  The array of arguments for a model or table fields
+     */
+    private function write(?array $args = null): void
+    {
+        $data = [];
+
+        if (! is_null($args)) {
+            $data = $args;
+        } elseif (! empty($this->state)) {
+            $data = $this->parcelService->factoryClass()::make()->state($this->state)->definition();
+        } else {
+            $data = $this->parcelService->factoryClass()::make()->definition();
+        }
+
+        $this->mpdf->WriteHTML(
+            Stub::of(
+                $this->parcelService->stub(),
+                $data
+            )->render()
+        );
+    }
+
+    /**
      * Setter for $state
      *
      * @param  array  $state  The state of the waybills
@@ -134,7 +159,8 @@ class Waybill
      */
     public function toArray(): array
     {
-        return $this->parcelService->factoryClass()::make()->state($this->state)->create();
+        return $this->parcelService->factoryClass()::make()
+            ->state($this->state)->create();
     }
 
     /**
@@ -146,16 +172,25 @@ class Waybill
      */
     public function save(string $filename = 'waybills.pdf'): mixed
     {
-        $this->mpdf->WriteHTML(
-            $html = Stub::of(
-                $this->parcelService->stub(),
-                $this->parcelService->factoryClass()::make()->definition()
-            )->render()
-        );
+        $this->write();
 
         $path = empty($this->path) ? '' : $this->path.DIRECTORY_SEPARATOR;
 
-        return $this->mpdf->Output($path.$filename, 'F');
+        return $this->mpdf->Output($path.$filename, false);
+    }
+
+    /**
+     * Download the waybills data to PDF
+     *
+     * @param  string  $filename  A filename to create
+     *
+     * @example $waybill = Waybill::of(ParcelService::Cj)->path(realpath(__DIR__.'/../dist'))->save('test.pdf');
+     */
+    public function download(string $filename = 'waybills.pdf'): mixed
+    {
+        $this->write();
+
+        return $this->mpdf->Output($filename, true);
     }
 
     /**
