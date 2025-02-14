@@ -34,6 +34,9 @@ final class SlicerTest extends TestCase
             ->source(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'dist'.DIRECTORY_SEPARATOR.'order_sheet_invoice.pdf')
             ->save(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'dist'.DIRECTORY_SEPARATOR.'order_sheet_invoice_one_page.pdf');
 
-        $this->assertFileExists(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'test.pdf');
+        $this->assertFileExists(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'order_sheet_invoice_one_page.pdf');
+
+        unlink(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'order_sheet_invoice.pdf');
+        unlink(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'order_sheet_invoice_one_page.pdf');
     }
 }

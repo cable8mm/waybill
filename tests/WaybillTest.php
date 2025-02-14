@@ -47,5 +47,7 @@ final class WaybillTest extends TestCase
             ->save('test.pdf');
 
         $this->assertFileExists(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'test.pdf');
+
+        unlink(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'test.pdf');
     }
 }
