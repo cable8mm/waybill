@@ -37,6 +37,14 @@ $orderSheet = Waybill::of(ParcelService::Cj)
             ->toArray()
 ```
 
+Slice the page of the waybills:
+
+```php
+Slicer::of(ParcelService::Cj, 1)
+    ->source('source.pdf')
+    ->save('one_page.pdf');
+```
+
 ### How to customize
 
 If you want to add another parcel service like UPS, you would need to make `Enums` and `Factory` class, for example:
