@@ -41,7 +41,7 @@ class Waybill
     /**
      * Run WriteHTML function
      *
-     * @param  ?array<string,Tvalue>  $args  The array of arguments for a model or table fields
+     * @param  null|array<string,Tvalue>  $args  The array of arguments for a model or table fields
      */
     public function write(?array $args = null): void
     {
