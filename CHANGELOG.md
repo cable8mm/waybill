@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.3.2 - 2025-02-15
+
+### What's Changed
+
+* Enhance `download()` to `Slicer` class by [@cable8mm](https://github.com/cable8mm) in https://github.com/cable8mm/waybill/pull/11
+
+**Full Changelog**: https://github.com/cable8mm/waybill/compare/v1.3.1...v1.3.2
+
 ## v1.3.1 - 2025-02-15
 
 ### What's Changed
