@@ -70,7 +70,7 @@ class Slicer
     {
         $mpdf = Mpdf::instance();
 
-        $pagecount = $mpdf->SetSourceFile($this->source);
+        $mpdf->SetSourceFile($this->source);
 
         $tplId = $mpdf->ImportPage($this->page);
 
@@ -82,7 +82,9 @@ class Slicer
             $this->parcelService->templateArea()[3]
         );
 
-        return $mpdf->Output($path, $destination);
+        return $destination == Destination::FILE
+            ? $mpdf->Output($path, $destination)
+            : $mpdf->Output(basename($path), $destination);
     }
 
     /**
