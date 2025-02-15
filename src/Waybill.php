@@ -23,24 +23,19 @@ class Waybill
     private string $path;
 
     /**
-     * ParcelService instance
-     */
-    private ParcelService $parcelService;
-
-    /**
-     * Mpdf instance
-     */
-    private Mpdf $mpdf;
-
-    /**
      * Constructor
      */
     private function __construct(
-        ParcelService $parcelService
+        /**
+         * ParcelService instance
+         */
+        private ParcelService $parcelService,
+        /**
+         * Mpdf instance
+         */
+        private ?Mpdf $mpdf = null
     ) {
-        $this->parcelService = $parcelService;
-
-        $this->mpdf = SupportMpdf::instance();
+        //
     }
 
     /**
@@ -48,7 +43,7 @@ class Waybill
      *
      * @param  ?array<string,Tvalue>  $args  The array of arguments for a model or table fields
      */
-    private function write(?array $args = null): void
+    public function write(?array $args = null): void
     {
         $data = [];
 
@@ -66,6 +61,21 @@ class Waybill
                 $data
             )->render()
         );
+    }
+
+    /**
+     * Setter for $mpdf
+     *
+     * @param  Mpdf  $mpdf  The mpdf of the waybills
+     * @return static The method returns self instance
+     *
+     * @example $waybill = Waybill::of(ParcelService::Cj)->mpdf(SupportMpdf::instance())->...
+     */
+    public function mpdf(Mpdf $mpdf): static
+    {
+        $this->mpdf = $mpdf;
+
+        return $this;
     }
 
     /**
@@ -103,7 +113,7 @@ class Waybill
      *
      * @return array The method returns the waybills data as array or CSV string
      *
-     * @example $orderSheet = Waybill::of(ParcelService::Cj)->toArray();
+     * @example $waybill = Waybill::of(ParcelService::Cj)->toArray();
      */
     public function toArray(): array
     {
@@ -154,14 +164,29 @@ class Waybill
     }
 
     /**
-     * Factory method to create an instance of OrderSheet
+     * Factory method to create an instance of Waybill
      *
      * @param  ParcelService  $parcelService  The waybills type
-     * @return static The method returns the OrderSheet instance
+     * @return static The method returns the Waybill instance
      *
-     * @example Waybill::of(ParcelService::Cj)->...
+     * @example Waybill::of(ParcelService::Cj, $mpdf)->...
      */
-    public static function of(ParcelService $parcelService): static
+    public static function of(ParcelService $parcelService, ?Mpdf $mpdf = null): static
+    {
+        $mpdf = $mpdf ?? SupportMpdf::instance();
+
+        return new static($parcelService, $mpdf);
+    }
+
+    /**
+     * Factory method to create an instance without mpdf instance of Waybill
+     *
+     * @param  ParcelService  $parcelService  The waybills type
+     * @return static The method returns the Waybill instance
+     *
+     * @example Waybill::make(ParcelService::Cj)->make($mpdf)->...
+     */
+    public static function make(ParcelService $parcelService): static
     {
         return new static($parcelService);
     }
