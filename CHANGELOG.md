@@ -1,5 +1,14 @@
 # Release Notes
 
+## v1.3.0 - 2025-02-15
+
+### What's Changed
+
+* Add `WaybillCollection` class and tests by [@cable8mm](https://github.com/cable8mm) in https://github.com/cable8mm/waybill/pull/8
+* Fix errors about `composer apidoc` command by [@cable8mm](https://github.com/cable8mm) in https://github.com/cable8mm/waybill/pull/9
+
+**Full Changelog**: https://github.com/cable8mm/waybill/compare/v1.2.0...v1.3.0
+
 ## v1.2.0 - 2025-02-14
 
 ### What's Changed
