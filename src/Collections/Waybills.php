@@ -28,12 +28,16 @@ class Waybills implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Adds a Waybill object to the container
      *
-     * @param  \Cable8mm\Waybill\Waybill  $waybill  a Waybill object
+     * @param  \Cable8mm\Waybill\Waybill|array  $waybill  a Waybill object
      * @return static The method returns the instance
      */
-    public function add(Waybill $waybill): static
+    public function add(Waybill|array $waybill): static
     {
-        $this->container[] = $waybill;
+        if (is_array($waybill)) {
+            $this->container = array_merge($this->container, $waybill);
+        } else {
+            $this->container[] = $waybill;
+        }
 
         return $this;
     }

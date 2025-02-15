@@ -36,7 +36,13 @@ class WaybillCollection
         //
     }
 
-    public function add(Waybill $waybill): static
+    /**
+     * Adds a Waybill object to the container
+     *
+     * @param  \Cable8mm\Waybill\Waybill|array  $waybill  a Waybill object
+     * @return static The method returns the instance
+     */
+    public function add(Waybill|array $waybill): static
     {
         $this->waybills->add($waybill);
 
