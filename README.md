@@ -65,7 +65,7 @@ Slice the page of the waybills:
 ```php
 Slicer::of(ParcelService::Cj, 1)
     ->source('source.pdf')
-    ->save('one_page.pdf');
+    ->save('one_page.pdf'); // or `->download('one_page.pdf')`
 ```
 
 ### How to customize

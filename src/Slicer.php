@@ -63,13 +63,14 @@ class Slicer
      * Save the page of waybills
      *
      * @param  string  $path  The path to save the waybills
+     * @param  \Mpdf\Output\Destination  $destination  The destination
      * @return mixed The method returns
      */
-    public function save(string $path): mixed
+    public function save(string $path, $destination = Destination::FILE): mixed
     {
         $mpdf = Mpdf::instance();
 
-        $pagecount = $mpdf->SetSourceFile($this->source);
+        $mpdf->SetSourceFile($this->source);
 
         $tplId = $mpdf->ImportPage($this->page);
 
@@ -81,7 +82,20 @@ class Slicer
             $this->parcelService->templateArea()[3]
         );
 
-        return $mpdf->Output($path, Destination::FILE);
+        return $destination == Destination::FILE
+            ? $mpdf->Output($path, $destination)
+            : $mpdf->Output(basename($path), $destination);
+    }
+
+    /**
+     * Download the page of waybills
+     *
+     * @param  string  $path  The path to save the waybills
+     * @return mixed The method returns
+     */
+    public function download(string $path): mixed
+    {
+        return $this->save($path, Destination::DOWNLOAD);
     }
 
     /**
