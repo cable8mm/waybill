@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.3.1 - 2025-02-15
+
+### What's Changed
+
+* Improve `add()` method of `WaybillCollection` by [@cable8mm](https://github.com/cable8mm) in https://github.com/cable8mm/waybill/pull/10
+
+**Full Changelog**: https://github.com/cable8mm/waybill/compare/v1.3.0...v1.3.1
+
 ## v1.3.0 - 2025-02-15
 
 ### What's Changed
