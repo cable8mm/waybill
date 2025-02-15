@@ -33,8 +33,23 @@ Waybill::of(ParcelService::Cj)
 Get a waybill array:
 
 ```php
-$orderSheet = Waybill::of(ParcelService::Cj)
+$waybill = Waybill::of(ParcelService::Cj)
             ->toArray()
+```
+
+Save multiple waybills for pdf format:
+
+```php
+$mpdf = Mpdf::instance();
+
+WaybillCollection::of(mpdf: $mpdf)
+    ->add(Waybill::of(ParcelService::Cj, mpdf: $mpdf))
+    ->add(Waybill::of(ParcelService::Cj, mpdf: $mpdf))
+    ->add(Waybill::of(ParcelService::Cj, mpdf: $mpdf))
+    ->add(Waybill::of(ParcelService::Cj, mpdf: $mpdf))
+    ->add(Waybill::of(ParcelService::Cj, mpdf: $mpdf))
+    ->path(realpath(__DIR__.'/../dist'))
+    ->save('collection.pdf');
 ```
 
 Slice the page of the waybills:
