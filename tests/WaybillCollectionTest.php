@@ -44,6 +44,24 @@ final class WaybillCollectionTest extends TestCase
         $this->assertEquals(15, count($waybillCollection));
     }
 
+    public function test_to_array_method_on_array_way(): void
+    {
+        $mpdf = Mpdf::instance();
+
+        $waybillCollection = WaybillCollection::of(
+            Waybills::make()
+                ->add([
+                    Waybill::of(ParcelService::Cj, $mpdf),
+                    Waybill::of(ParcelService::Cj, $mpdf),
+                    Waybill::of(ParcelService::Cj, $mpdf),
+                ]),
+            5,
+            $mpdf
+        )->toArray();
+
+        $this->assertEquals(15, count($waybillCollection));
+    }
+
     public function test_save_method(): void
     {
         $mpdf = Mpdf::instance();
