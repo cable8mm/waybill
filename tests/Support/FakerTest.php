@@ -1,6 +1,6 @@
 <?php
 
-namespace Cable8mm\OrderSheet\Tests\Support;
+namespace Cable8mm\Waybill\Tests\Support;
 
 use Cable8mm\Waybill\Support\Faker;
 use PHPUnit\Framework\TestCase;

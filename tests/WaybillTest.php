@@ -3,6 +3,7 @@
 namespace Cable8mm\Waybill\Tests;
 
 use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Support\Mpdf;
 use Cable8mm\Waybill\Waybill;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -31,6 +32,17 @@ final class WaybillTest extends TestCase
         $this->assertIsArray($waybill);
     }
 
+    public function test_make(): void
+    {
+        $mpdf = Mpdf::instance();
+
+        $waybill = Waybill::make(ParcelService::Cj)
+            ->mpdf($mpdf)
+            ->toArray();
+
+        $this->assertIsArray($waybill);
+    }
+
     public function test_state(): void
     {
         $waybill = Waybill::of(ParcelService::Cj)
@@ -43,6 +55,18 @@ final class WaybillTest extends TestCase
     public function test_save(): void
     {
         $waybill = Waybill::of(ParcelService::Cj)
+            ->path(realpath(__DIR__.'/../dist'))
+            ->save('test.pdf');
+
+        $this->assertFileExists(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'test.pdf');
+
+        unlink(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'test.pdf');
+    }
+
+    public function test_save_on_another_way(): void
+    {
+        $waybill = Waybill::make(ParcelService::Cj)
+            ->mpdf(Mpdf::instance())
             ->path(realpath(__DIR__.'/../dist'))
             ->save('test.pdf');
 
