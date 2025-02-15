@@ -85,11 +85,11 @@ class Slicer
     }
 
     /**
-     * Factory method to create an instance of OrderSheet
+     * Factory method to create an instance of Slicer
      *
      * @param  ParcelService  $parcelService  The waybills type
      * @param  int  $page  The page to save the waybills
-     * @return static The method returns the OrderSheet instance
+     * @return static The method returns the Slicer instance
      *
      * @example Slicer::of(ParcelService::Cj)->...
      */
