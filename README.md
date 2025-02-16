@@ -54,7 +54,7 @@ WaybillCollection::of(mpdf: $mpdf)
     ->add([
       Waybill::of(ParcelService::Cj, mpdf: $mpdf),
       Waybill::of(ParcelService::Cj, mpdf: $mpdf),      
-      )
+      ])
     ->path(realpath(__DIR__.'/../dist'))
     ->save('collection.pdf');
 
