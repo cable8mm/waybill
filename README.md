@@ -19,7 +19,7 @@ composer require cable8mm/waybill
 
 ## Usage
 
-Save a waybill for pdf format:
+Save a waybill in PDF format:
 
 ```php
 use Cable8mm\Waybill\Enums\ParcelService;
@@ -34,7 +34,7 @@ Get a waybill array:
 
 ```php
 $waybill = Waybill::of(ParcelService::Cj)
-            ->toArray()
+            ->toArray();
 ```
 
 Save multiple waybills for pdf format:
@@ -53,7 +53,7 @@ WaybillCollection::of(mpdf: $mpdf)
 WaybillCollection::of(mpdf: $mpdf)
     ->add([
       Waybill::of(ParcelService::Cj, mpdf: $mpdf),
-      Waybill::of(ParcelService::Cj, mpdf: $mpdf),      
+      Waybill::of(ParcelService::Cj, mpdf: $mpdf),
       ])
     ->path(realpath(__DIR__.'/../dist'))
     ->save('collection.pdf');
@@ -70,10 +70,11 @@ Slicer::of(ParcelService::Cj, 1)
 
 ### How to customize
 
-If you want to add another parcel service like UPS, you would need to make `Enums` and `Factory` class, for example:
+If you want to add another parcel service like UPS, you would need to make `Enum` and `Factory` classes, for example:
 
-1. Make `UpsFactory.php` into `src/Factories' folder.
-2. Make `Enum` element into `src/Enums` folder.
+1. Create `UpsFactory.php` in the `src/Factories/` folder.
+2. Add an `Ups` case to the `ParcelService` enum in `src/Enums/ParcelService.php`.
+3. Implement `factoryClass()`, `stub()`, and `templateArea()` methods for the new case.
 
 ### Testing
 
