@@ -2,10 +2,17 @@
 
 namespace Cable8mm\Waybill\Support;
 
+use Bezhanov\Faker\Provider\Commerce;
+use Bezhanov\Faker\Provider\Device;
+use Faker\Factory;
+use Faker\Generator;
+use Picqer\Barcode\Renderers\PngRenderer;
+use Picqer\Barcode\Types\TypeCode128;
+
 class Faker
 {
     /**
-     * @var \Faker\Generator
+     * @var Generator
      */
     private static $instance;
 
@@ -13,15 +20,15 @@ class Faker
      * Get \Faker\Generator singleton instance
      *
      * @param  ?string  $locale  the locale
-     * @return \Faker\Generator The method returns \Faker\Generator singleton instance
+     * @return Generator The method returns \Faker\Generator singleton instance
      */
-    public static function shared(?string $locale = 'ko_KR'): \Faker\Generator
+    public static function shared(?string $locale = 'ko_KR'): Generator
     {
         if (! isset(self::$instance)) {
-            self::$instance = \Faker\Factory::create($locale);
+            self::$instance = Factory::create($locale);
 
-            self::$instance->addProvider(new \Bezhanov\Faker\Provider\Commerce(self::$instance));
-            self::$instance->addProvider(new \Bezhanov\Faker\Provider\Device(self::$instance));
+            self::$instance->addProvider(new Commerce(self::$instance));
+            self::$instance->addProvider(new Device(self::$instance));
         }
 
         return self::$instance;
@@ -50,9 +57,9 @@ class Faker
      */
     public function barcode(): string
     {
-        $barcode = (new \Picqer\Barcode\Types\TypeCode128)->getBarcode(self::shared()->ean13());
+        $barcode = (new TypeCode128)->getBarcode(self::shared()->ean13());
 
-        $renderer = new \Picqer\Barcode\Renderers\PngRenderer;
+        $renderer = new PngRenderer;
 
         return 'data:image/png;base64,'.base64_encode($renderer->render($barcode));
     }

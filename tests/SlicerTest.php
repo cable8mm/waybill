@@ -12,7 +12,7 @@ use ReflectionClass;
 
 final class SlicerTest extends TestCase
 {
-    public function test_path_method(): void
+    public function test_source_method(): void
     {
         $slicer = Slicer::of(ParcelService::Cj, 1)
             ->source(realpath(__DIR__.'/../dist'));
@@ -24,6 +24,20 @@ final class SlicerTest extends TestCase
         $source->setAccessible(true);
 
         $this->assertStringContainsString(DIRECTORY_SEPARATOR.'dist', $source->getValue($slicer));
+    }
+
+    public function test_page_method(): void
+    {
+        $slicer = Slicer::of(ParcelService::Cj, 1)
+            ->page(3);
+
+        $reflection = new ReflectionClass($slicer);
+
+        $page = $reflection->getProperty('page');
+
+        $page->setAccessible(true);
+
+        $this->assertEquals(3, $page->getValue($slicer));
     }
 
     public function test_save_method(): void

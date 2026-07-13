@@ -20,7 +20,7 @@ class Waybill
     /**
      * The path to save the waybills
      */
-    private string $path;
+    private string $path = '';
 
     /**
      * Constructor
@@ -50,9 +50,9 @@ class Waybill
         if (! is_null($args)) {
             $data = $args;
         } elseif (! empty($this->state)) {
-            $data = $this->parcelService->factoryClass()::make()->state($this->state)->definition();
+            $data = $this->parcelService->factoryClass()::make()->state($this->state)->create();
         } else {
-            $data = $this->parcelService->factoryClass()::make()->definition();
+            $data = $this->parcelService->factoryClass()::make()->create();
         }
 
         $this->mpdf->WriteHTML(

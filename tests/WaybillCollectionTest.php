@@ -100,4 +100,22 @@ final class WaybillCollectionTest extends TestCase
 
         unlink(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'collection.pdf');
     }
+
+    public function test_download_method(): void
+    {
+        $mpdf = Mpdf::instance();
+
+        $waybillCollection = WaybillCollection::of(mpdf: $mpdf)
+            ->add(Waybill::of(ParcelService::Cj, mpdf: $mpdf));
+
+        ob_start();
+
+        $waybillCollection->download('collection_download.pdf');
+
+        $content = ob_get_contents();
+
+        ob_end_clean();
+
+        $this->assertNotEmpty($content);
+    }
 }

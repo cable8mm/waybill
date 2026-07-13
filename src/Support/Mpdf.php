@@ -2,17 +2,20 @@
 
 namespace Cable8mm\Waybill\Support;
 
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
+
 class Mpdf
 {
     public static function instance(): \Mpdf\Mpdf
     {
         $config = include __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'config.php';
 
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables)->getDefaults();
+        $defaultConfig = (new ConfigVariables)->getDefaults();
         $fontDirs = $defaultConfig['fontDir'];
         $tempDir = $defaultConfig['tempDir'];
 
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables)->getDefaults();
+        $defaultFontConfig = (new FontVariables)->getDefaults();
         $fontData = $defaultFontConfig['fontdata'];
 
         $configGlobal = [
