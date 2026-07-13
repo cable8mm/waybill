@@ -18,7 +18,7 @@ class Waybills implements ArrayAccess, Countable, IteratorAggregate
      */
     public function __construct(
         /**
-         * @var array<WayBill> Array of Waybill objects
+         * @var array<Waybill> Array of Waybill objects
          */
         private array $container = []
     ) {
@@ -28,7 +28,7 @@ class Waybills implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Adds a Waybill object to the container
      *
-     * @param  \Cable8mm\Waybill\Waybill|array  $waybill  a Waybill object
+     * @param  Waybill|array  $waybill  a Waybill object
      * @return static The method returns the instance
      */
     public function add(Waybill|array $waybill): static

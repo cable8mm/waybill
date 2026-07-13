@@ -3,6 +3,7 @@
 namespace Cable8mm\Waybill\Tests\Enums;
 
 use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Factories\CjFactory;
 use PHPUnit\Framework\TestCase;
 
 final class ParcelServiceTest extends TestCase
@@ -19,7 +20,7 @@ final class ParcelServiceTest extends TestCase
 
     public function test_factory_class(): void
     {
-        $this->assertEquals(\Cable8mm\Waybill\Factories\CjFactory::class, ParcelService::Cj->factoryClass());
+        $this->assertEquals(CjFactory::class, ParcelService::Cj->factoryClass());
     }
 
     public function test_stub(): void

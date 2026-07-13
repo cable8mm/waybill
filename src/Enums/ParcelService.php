@@ -2,6 +2,8 @@
 
 namespace Cable8mm\Waybill\Enums;
 
+use Cable8mm\Waybill\Factories\CjFactory;
+
 enum ParcelService: string
 {
     /**
@@ -19,7 +21,7 @@ enum ParcelService: string
     public function factoryClass(): string
     {
         return match ($this) {
-            self::Cj => \Cable8mm\Waybill\Factories\CjFactory::class,
+            self::Cj => CjFactory::class,
         };
     }
 
