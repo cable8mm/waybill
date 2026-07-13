@@ -14,7 +14,7 @@ class WaybillCollection
     /**
      * @var string The path to save the waybills
      */
-    private string $path;
+    private string $path = '';
 
     /**
      * Constructor
