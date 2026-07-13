@@ -47,12 +47,10 @@ abstract class Factory
      */
     public function create(): array
     {
-        $record = array_values($this->definition());
+        $record = $this->definition();
 
         if (! empty($this->state)) {
-            foreach ($this->state as $key => $value) {
-                $record[$key] = $this->{$key} ?? $value;
-            }
+            $record = array_replace($record, $this->state);
         }
 
         return $record;
