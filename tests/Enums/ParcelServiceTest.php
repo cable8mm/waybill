@@ -26,4 +26,15 @@ final class ParcelServiceTest extends TestCase
     {
         $this->assertIsString(ParcelService::Cj->stub());
     }
+
+    public function test_template_area(): void
+    {
+        $area = ParcelService::Cj->templateArea();
+
+        $this->assertCount(4, $area);
+        $this->assertIsInt($area[0]);
+        $this->assertIsInt($area[1]);
+        $this->assertIsInt($area[2]);
+        $this->assertIsInt($area[3]);
+    }
 }

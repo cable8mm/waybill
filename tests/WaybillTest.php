@@ -74,4 +74,26 @@ final class WaybillTest extends TestCase
 
         unlink(realpath(__DIR__.'/../dist').DIRECTORY_SEPARATOR.'test.pdf');
     }
+
+    public function test_to_string(): void
+    {
+        $waybill = Waybill::of(ParcelService::Cj);
+
+        $this->assertEquals('CJ택배', (string) $waybill);
+    }
+
+    public function test_download(): void
+    {
+        $waybill = Waybill::of(ParcelService::Cj);
+
+        ob_start();
+
+        $waybill->download('test_download.pdf');
+
+        $content = ob_get_contents();
+
+        ob_end_clean();
+
+        $this->assertNotEmpty($content);
+    }
 }
