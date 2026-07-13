@@ -105,7 +105,7 @@ class Slicer
      * @param  int  $page  The page to save the waybills
      * @return static The method returns the Slicer instance
      *
-     * @example Slicer::of(ParcelService::Cj)->...
+     * @example Slicer::of(ParcelService::Cj, 1)->...
      */
     public static function of(ParcelService $parcelService, int $page): static
     {
