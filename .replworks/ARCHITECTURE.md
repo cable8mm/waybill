@@ -162,7 +162,7 @@
 - Responsibilities:
   - Declare supported label formats `{5-inch}` and default `5-inch`.
   - Resolve the CJ `5-inch` Template.
-  - Return Template Area `[-40, -46, 285, 196]`.
+  - Return Template Area `[0, 0, width, height]` of the label format.
   - Reject unsupported label format names.
   - Identify C-09 as its Data Factory.
   - Return name `CJ택배`.
@@ -197,11 +197,11 @@
 
 - Responsibilities:
   - Generate the full CJ default record.
-  - Merge State with top-level replacement.
+  - Merge State with top-level replacement, then key-level replacement inside `seller`, `receiver`, `city`, and `region`.
   - Regenerate `barcode` from `tracking_number` unless State supplies `barcode`.
 - Inputs: State.
 - Outputs: CJ Label Data Record.
-- Ownership: owns CJ field set, CJ default value formats, CJ barcode synchronization.
+- Ownership: owns CJ field set, CJ default value formats, CJ merge policy, CJ barcode synchronization.
 
 ### C-10 Hanjin Data Factory
 
@@ -361,7 +361,7 @@
 - RD-03: Ambiguous: whether repeat count affects PDF output. Decided: repeat count applies only to data export (AR-11). Why: PRODUCT_SPEC FR-047.
 - RD-04: Ambiguous: order of masking relative to barcode regeneration. Decided: merge, then barcode regeneration, then masking (AR-02, AR-03). Why: masking touches only sender and receiver fields, so barcodes encode unmasked source fields; PRODUCT_SPEC FR-019 requires masking before return and render.
 - RD-05: Ambiguous: whether masking is a Provider or Data Factory responsibility. Decided: the Hanjin Data Factory invokes C-11 as the last lifecycle step. Why: PRODUCT_SPEC FR-019 requires masked values from data export (EL-006), which does not involve Templates; FR-032 requires direct records to bypass masking, which only holds if masking lives in the Data Factory path.
-- RD-06: Ambiguous: merge depth. Decided: top-level replacement by default (C-08); Hanjin adds key-level replacement for `sender` and `receiver` only (C-10). Why: PRODUCT_SPEC FR-010, FR-011, FR-012.
+- RD-06: Ambiguous: merge depth. Decided: top-level replacement by default (C-08); CJ adds key-level replacement for `seller`, `receiver`, `city`, and `region` (C-09); Hanjin adds key-level replacement for `sender` and `receiver` (C-10). Why: PRODUCT_SPEC FR-010, FR-011, FR-012.
 - RD-07: Ambiguous: Collection Document page geometry when created without a Document. Decided: C-14 creates it from Configuration without a Label Format. Why: PRODUCT_SPEC EL-012.
 - RD-08: Ambiguous: Slicer filename for non-file sinks. Decided: base name of the given path; file sink uses the full path. Why: PRODUCT_SPEC EL-024.
 - RD-09: Ambiguous: whether Configuration or Label Format wins for page geometry. Decided: Label Format overrides Configuration for page size, orientation, and margins, and forces header and footer margins to 0. Why: PRODUCT_SPEC EL-025 and FR-036.

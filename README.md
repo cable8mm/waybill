@@ -15,7 +15,7 @@ PHP로 PDF 운송장 레이아웃을 생성하는 라이브러리입니다. 기�
 
 ## 설치
 
-Composer로 설치할 수 있습니다:
+PHP 8.2 이상과 `gd`, `mbstring` 확장이 필요합니다. Composer로 설치할 수 있습니다:
 
 ```bash
 composer require cable8mm/waybill
@@ -69,7 +69,9 @@ Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::FS])
     ->save('hanjin-fs.pdf');
 ```
 
-NS/NL/FS printer media dimensions and their tolerances come from [PlayAuto's Hanjin print settings](https://www.plto.com/customer/HelpDesc/gmp/13789). Their W/H values can be rotated by printer drivers; these templates follow the orientation shown in Hanjin's [official layout guide](https://developers.hanjin.com/printwbl). Hanjin sample data masks names, phone numbers, and detailed addresses according to the guide. The package does not book shipments or issue carrier tracking/routing data.
+NS/NL/FS 용지 크기와 허용 오차(±5 mm)는 [플레이오토의 한진 출력 설정](https://www.plto.com/customer/HelpDesc/gmp/13789)을 따릅니다. 프린터 드라이버에 따라 가로·세로 값을 바꿔 설정해야 할 수 있으며, 템플릿은 한진 [공식 출력 가이드](https://developers.hanjin.com/printwbl)의 예시 방향을 따릅니다.
+
+한진 운송장은 가이드의 개인정보 마스킹 규칙에 따라 보내는 분과 받는 분의 이름, 전화번호, 상세 주소를 가린 뒤 출력합니다. `state()`로 넘긴 값도 똑같이 가려집니다. 한진 운송장 번호는 Interleaved 2 of 5 바코드로 인코딩되므로 숫자만 사용할 수 있습니다. 이 패키지는 한진에 배송을 접수하거나 운송장 번호·분류 코드를 발급하지 않습니다.
 
 운송장 데이터를 배열로 가져오기 (API 응답 또는 CSV 내보내기용):
 
@@ -83,7 +85,7 @@ $waybill = Waybill::of(ParcelService::Cj)
 
 ### 커스텀 데이터 사용하기 (`state()`)
 
-실제 주문 데이터로 특정 필드를 덮어씁니다:
+실제 주문 데이터로 특정 필드를 덮어씁니다. 넘기지 않은 필드는 미리보기용 임의 값으로 채워집니다:
 
 ```php
 use Cable8mm\Waybill\Enums\ParcelService;
@@ -91,13 +93,30 @@ use Cable8mm\Waybill\Waybill;
 
 Waybill::of(ParcelService::Cj)
     ->state([
-        'seller' => ['name' => '내회사', 'phone' => '02-1234-5678'],
-        'receiver' => ['name' => '홍길동', 'phone' => '010-1234-5678'],
+        'seller' => [
+            'name' => '내회사',
+            'phone' => '02-1234-5678',
+            'site' => '쿠팡',
+            'address' => '서울특별시 중구 세종대로 110',
+        ],
+        'receiver' => [
+            'name' => '홍길동',
+            'phone' => '02-987-6543',
+            'cell_phone' => '010-1234-5678',
+            'address' => '서울특별시 강남구 테헤란로 123 4층',
+        ],
         'tracking_number' => '5856-0852-8903',
     ])
     ->path(realpath(__DIR__.'/../dist'))
     ->save('waybill.pdf');
 ```
+
+택배사마다 중첩 배열을 합치는 방식이 다릅니다.
+
+- CJ: `seller`, `receiver`처럼 배열로 된 필드는 넘긴 배열이 기본값 배열 전체를 대체합니다. 일부 키만 넘기면 나머지 키가 없어져 PDF를 만들 때 오류가 나므로, 위 예시처럼 모든 키를 함께 넘겨야 합니다.
+- 한진: `sender`, `receiver`는 넘긴 키만 바꾸고 나머지 키는 기본값을 유지합니다.
+
+`state()`를 다시 호출하면 앞서 설정한 값은 모두 새 값으로 바뀝니다.
 
 ### 인스턴스 분리 생성 후 mpdf 주입
 
@@ -142,8 +161,11 @@ WaybillCollection::of(mpdf: $mpdf)
       ])
     ->path(realpath(__DIR__.'/../dist'))
     ->save('collection.pdf');
-
 ```
+
+컬렉션과 모든 송장은 같은 `$mpdf` 인스턴스를 써야 합니다. 다른 인스턴스로 만든 송장은 컬렉션 PDF에 들어가지 않습니다. `Mpdf::instance()`는 인자가 없으면 `config.php`의 기본 용지(123 × 100 mm)를 쓰므로, 한진 NS·NL처럼 크기가 다른 양식은 `Mpdf::instance($format)`으로 같은 규격의 인스턴스를 만들어 사용합니다.
+
+`WaybillCollection::of($waybills, 5)`처럼 지정하는 두 번째 인자(반복 횟수)는 `toArray()`에만 적용됩니다. PDF에는 송장마다 한 장씩만 출력됩니다.
 
 ### PDF에서 특정 운송장만 추출하기
 
@@ -160,26 +182,45 @@ Slicer::of(ParcelService::Cj, 1)
 
 ### 설정
 
-`config.php` 파일에서 mPDF 설정을 관리합니다. 한글 폰트(NanumBarunGothic), 용지 크기, 여백, 워터마크 등을 설정할 수 있습니다:
+`config.php` 파일에서 mPDF 설정을 관리합니다. 한글 폰트, 기본 용지 크기, 여백, 문서 정보, 워터마크 등을 설정할 수 있습니다:
 
 ```php
 return [
     'mode' => 'utf-8',
-    'format' => 'A4',
-    'custom_font_dir' => __DIR__.'/fonts',
+    'format' => [100, 123],
+    'orientation' => 'L',
+    'default_font' => 'nanumbarungothic',
+    'custom_font_dir' => __DIR__.DIRECTORY_SEPARATOR.'fonts',
     'custom_font_data' => [
-        'nbg' => [
+        'nanumbarungothic' => [ // CJ 양식
             'R' => 'NanumBarunGothic.ttf',
+            'B' => 'NanumBarunGothic.ttf',
+            'I' => 'NanumBarunGothic.ttf',
+            'BI' => 'NanumBarunGothic.ttf',
+        ],
+        'nanumgothic' => [ // 한진 양식
+            'R' => 'NanumGothic-Regular.ttf',
+            'B' => 'NanumGothic-Bold.ttf',
+            'I' => 'NanumGothic-Regular.ttf',
+            'BI' => 'NanumGothic-Bold.ttf',
         ],
     ],
-    'default_font' => 'nbg',
     // ...
 ];
 ```
 
+폰트 키는 소문자로 써야 합니다. `Waybill::of()`나 `Mpdf::instance($format)`에 `LabelFormat`을 지정하면 용지 크기, 방향, 여백은 `config.php` 대신 `LabelFormat` 값을 따르고 머리글·바닥글 여백은 0이 됩니다.
+
 ### 택배사와 규격 추가하기
 
-택배사별 데이터 생성과 템플릿 선택은 `WaybillProvider` 계약으로 분리되어 있습니다. 새 택배사는 앱이나 패키지에서 이 인터페이스를 구현하고, `labelFormats()`에 지원하는 `LabelFormat` 목록을 반환합니다. `stub(LabelFormat)`은 해당 택배사와 규격 조합의 템플릿을 선택하며, `factoryClass()`는 택배사별 데이터를 생성합니다. `templateArea(LabelFormat)`은 PDF에서 송장을 잘라낼 때 사용할 영역입니다.
+택배사별 데이터 생성과 템플릿 선택은 `WaybillProvider` 계약으로 분리되어 있습니다. 새 택배사는 앱이나 패키지에서 이 인터페이스를 구현하고, `labelFormats()`에 지원하는 `LabelFormat` 목록을 반환합니다. 각 메서드가 반환해야 하는 값은 다음과 같습니다.
+
+- `factoryClass()`: `Cable8mm\Waybill\Factories\Factory`를 상속하고 `definition()`을 구현한 클래스 이름. 이 클래스가 택배사별 기본 데이터를 만들고 `state()` 값을 합칩니다.
+- `labelFormats()`: 지원하는 `LabelFormat`을 이름을 키로 담은 배열. 규격 지원 여부는 이름으로만 판단합니다.
+- `defaultLabelFormat()`: 규격을 지정하지 않았을 때 쓸 `LabelFormat`.
+- `stub(LabelFormat)`: 해당 택배사와 규격 조합의 Twig 템플릿 파일 절대 경로. 지원하지 않는 규격이면 `InvalidArgumentException`을 던져야 합니다.
+- `templateArea(LabelFormat)`: `Slicer`가 PDF에서 송장을 잘라낼 때 쓸 `[x, y, 너비, 높이]` 영역(mm).
+- `name()`: 송장을 문자열로 바꿀 때 쓰는 택배사 이름.
 
 아래는 provider가 맡는 메서드를 보여주는 축약 예시입니다. 템플릿 경로와 자르기 영역은 실제 택배사 양식에 맞춰 구현해야 합니다.
 
@@ -201,8 +242,8 @@ final class ExampleCarrier implements WaybillProvider
         return $this->labelFormats()['example-5inch'];
     }
 
-    public function stub(LabelFormat $format): string { /* resolve carrier + format template */ }
-    public function templateArea(LabelFormat $format): array { /* crop area in mm */ }
+    public function stub(LabelFormat $format): string { /* 택배사 + 규격 템플릿의 절대 경로 */ }
+    public function templateArea(LabelFormat $format): array { /* 자르기 영역(mm) */ }
     public function name(): string { return 'Example Carrier'; }
 }
 ```
