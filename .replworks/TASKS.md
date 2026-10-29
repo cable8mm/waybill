@@ -186,7 +186,7 @@
     - Every test that writes a PDF file removes it after assertion.
     - Unit tests for every criterion above pass.
 
-- [ ] T-014 User-supplied provider
+- [x] T-014 User-supplied provider
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-058; User Interface EL-030; User Flows UF-007; Acceptance Criteria AC-030
   - External boundary: no
   - Acceptance criteria:

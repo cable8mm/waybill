@@ -57,6 +57,11 @@ class Waybill
             $data = $this->parcelService->factoryClass()::make()->create();
         }
 
+        // Start every label on its own page, whatever height its template fills.
+        if ($this->mpdf?->page > 0) {
+            $this->mpdf->AddPage();
+        }
+
         $this->mpdf->WriteHTML(
             Stub::of(
                 $this->parcelService->stub($this->format),

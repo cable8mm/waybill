@@ -1,0 +1,8 @@
+<html>
+<body>
+{% autoescape %}
+<p>{{ tracking_number }}</p>
+<p>{{ recipient }}</p>
+{% endautoescape %}
+</body>
+</html>
