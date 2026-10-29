@@ -98,7 +98,7 @@
     - State `tracking_number => 'AB12'` raises an invalid-character error on data export (ERR-005, AC-008).
     - Unit tests for every criterion above pass.
 
-- [ ] T-008 Hanjin personal data masking
+- [x] T-008 Hanjin personal data masking
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-019, FR-020, FR-021, FR-022, FR-023, FR-024, FR-025, FR-026, FR-027, FR-028, FR-029, FR-030, FR-031, FR-032; Acceptance Criteria AC-005
   - External boundary: no
   - Acceptance criteria:
