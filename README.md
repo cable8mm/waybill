@@ -7,7 +7,11 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/cable8mm/waybill.svg)](https://packagist.org/packages/cable8mm/waybill)
 [![Packagist Stars](https://img.shields.io/packagist/stars/cable8mm/waybill)](https://github.com/cable8mm/waybill/stargazers)
 
-PHP로 PDF 운송장을 손쉽게 생성할 수 있는 라이브러리입니다. CJ대한통운을 기본으로 지원하며, 바코드 생성, 송신자/수신자 정보, 커스터마이징 가능한 레이아웃을 제공합니다. 쇼핑몰이나 물류 시스템에서 배송 레이블 생성을 자동화하는 데 적합합니다.
+PHP로 PDF 운송장 레이아웃을 생성하는 라이브러리입니다. 기본 템플릿은 CJ대한통운 5인치 라벨 크기(123 × 100 mm)에 맞춰져 있으며, 바코드와 송신자/수신자 정보를 출력합니다.
+
+> 기본 Factory 데이터는 미리보기용 임의 데이터입니다. 이 패키지는 CJ대한통운에 배송을 접수하거나 운송장 번호·분류 코드를 발급하지 않습니다. 실제 배송에 사용하려면 CJ 또는 계약된 연동 솔루션에서 발급한 운송장 번호와 도착지/분류 코드를 `state()`로 전달하고, 사용 중인 계약 양식과 출력 위치를 확인해야 합니다. 운송장 번호를 전달하면 같은 번호를 바코드로 인코딩합니다. CJ 운송장 양식은 규격과 출력 프로그램에 따라 달라질 수 있습니다.
+
+기본 레이아웃은 [CJ대한통운 5인치 신형 운송장 가이드](tests/fixtures/cj/source.md)의 123 × 100 mm 예시를 기준으로 합니다. [2026년 분류 코드 표기 변경 안내](https://team.ebut.co.kr/3b1770fd-007f-8025-9e35-e044daeb5fdc)도 반영했습니다. 실제 배송에는 계약 고객에게 발급된 유효 운송장 번호와 분류 코드가 필요하며, 프린터별 출력 위치는 테스트 인쇄로 맞춰야 합니다.
 
 ## 설치
 
@@ -21,7 +25,7 @@ composer require cable8mm/waybill
 
 ### 빠른 시작
 
-기본 운송장을 PDF로 저장:
+기본 5인치 라벨 미리보기를 PDF로 저장:
 
 ```php
 use Cable8mm\Waybill\Enums\ParcelService;
@@ -54,7 +58,7 @@ Waybill::of(ParcelService::Cj)
     ->state([
         'seller' => ['name' => '내회사', 'phone' => '02-1234-5678'],
         'receiver' => ['name' => '홍길동', 'phone' => '010-1234-5678'],
-        'tracking_number' => 'CJ-1234-5678-9012',
+        'tracking_number' => '5856-0852-8903',
     ])
     ->path(realpath(__DIR__.'/../dist'))
     ->save('waybill.pdf');

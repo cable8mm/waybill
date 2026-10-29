@@ -13,6 +13,8 @@ class CjFactory extends Factory
      */
     public function definition(): array
     {
+        $trackingNumber = Faker::shared()->bothify('####-####-####');
+
         return [
             'city' => [
                 'code' => Faker::shared()->bothify('?#???'),
@@ -41,13 +43,29 @@ class CjFactory extends Factory
             'printed' => Faker::shared()->dateTime()->format('Y-m-d'),
             'total_printed_count' => Faker::shared()->randomNumber(3, true),
             'site_order_no' => Faker::shared()->randomNumber(5, true).Faker::shared()->randomNumber(5, true),
-            'tracking_number' => Faker::shared()->bothify('????-????-????'),
+            'tracking_number' => $trackingNumber,
             'delivery_worker' => Faker::shared()->name(),
             'settlement_type' => Faker::shared()->randomElement(['신용', '선불']),
             'print_date' => Faker::shared()->dateTime()->format('Y-m-d'),
             'box_quantity' => Faker::shared()->numberBetween(1, 3),
             'freight_type' => 'A',
-            'barcode' => Faker::make()->barcode(),
+            'barcode' => Faker::make()->barcode($trackingNumber),
         ];
+    }
+
+    /**
+     * Keep the rendered barcode synchronized when a caller supplies a tracking number.
+     *
+     * @return array<string, mixed>
+     */
+    public function create(): array
+    {
+        $record = parent::create();
+
+        if (! array_key_exists('barcode', $this->state)) {
+            $record['barcode'] = Faker::make()->barcode($record['tracking_number']);
+        }
+
+        return $record;
     }
 }

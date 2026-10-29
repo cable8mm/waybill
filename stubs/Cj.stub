@@ -1,145 +1,129 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Waybill</title>
+        <title>CJ Logistics 5-inch waybill</title>
         <style type="text/css">
-            body {
-                padding: 0;
-                margin: 0;
-            }
-            * {
-            vertical-align: top;
-            text-align: left;
-            font-weight: 700;
-            }
+            @page { margin: 0; }
+            * { box-sizing: border-box; }
+            body { margin: 0; padding: 0; font-family: nanumbarungothic, sans-serif; color: #000; }
+            table { border-collapse: collapse; }
+            .label { width: 123mm; height: 100mm; overflow: hidden; }
+            .main { width: 123mm; height: 100mm; table-layout: fixed; }
+            .main > tbody > tr > td { width: 123mm; padding: 0; vertical-align: top; }
+            .section { border-bottom: 0.25mm solid #000; padding: 0.7mm 1.5mm; }
+            .header { width: 100%; height: 7mm; table-layout: fixed; font-size: 7pt; }
+            .header td { padding: 0 1mm; border: 0; white-space: nowrap; }
+            .header .tracking { font-size: 9pt; font-weight: bold; }
+            .header .date { text-align: center; }
+            .header .count { text-align: center; }
+            .header .service { text-align: right; }
+            .routing { width: 100%; height: 19mm; table-layout: fixed; }
+            .routing td { padding: 0.5mm; border: 0; vertical-align: middle; }
+            .barcode { width: 34mm; height: 13mm; }
+            .route-main { font-size: 23pt; font-weight: bold; white-space: nowrap; }
+            .route-sub { font-size: 9pt; font-weight: bold; white-space: nowrap; }
+            .diamond { font-size: 11pt; }
+            .contact { width: 100%; table-layout: fixed; }
+            .contact td { vertical-align: top; }
+            .contact-label { width: 7mm; padding: 0.5mm 0; border-right: 0.25mm solid #000; text-align: center; font-size: 7pt; font-weight: bold; }
+            .contact-data { padding: 0.8mm 1.5mm !important; }
+            .recipient-name { font-size: 14pt; font-weight: bold; line-height: 1.1; }
+            .recipient-address { font-size: 11pt; font-weight: bold; line-height: 1.15; }
+            .small { font-size: 7pt; line-height: 1.15; }
+            .fields { width: 100%; height: 7mm; table-layout: fixed; font-size: 7pt; }
+            .fields td { padding: 0.5mm; border: 0.25mm solid #000; text-align: center; vertical-align: middle; }
+            .items { font-size: 7pt; line-height: 1.15; }
+            .footer-table { width: 100%; table-layout: fixed; }
+            .footer-table td { padding: 0.5mm; border: 0; vertical-align: middle; }
+            .footer-code { font-size: 10pt; font-weight: bold; white-space: nowrap; }
+            .footer-barcode { width: 34mm; height: 9mm; }
+            .privacy { font-size: 6pt; text-align: center; color: #900; }
         </style>
     </head>
-    <body
-        style="width: 100vw; height: 100vh; text-align: center; vertical-align: middle;">
-        <table style="width: 100%; height: 100%;">
-            <tr>
-                <td style="vertical-align: middle">
-                    <table
-                        style="width: 880px; height: 472px; margin: 0 auto;">
+    <body>
+        <div class="label">
+            <table class="main">
+                <tr><td style="height:6mm;">
+                    <table class="header">
                         <tr>
-                            <td>
-                                <table>
-                                    <tr>
-                                        <td
-                                            style=" width: 200px; font-size: 40px;
-                    font-weight:900; text-align:center;">
-                                            1D490<br>
-                                            <span
-                                                style="font-size: 16px; font-weight:900;">{{ city.name }}</span>
-                                        </td>
-                                        <td
-                                            style="width: 200px; font-size: 32px; font-weight:900;">
-                                            A4901-03<br>
-                                            <span
-                                                style="font-size: 16px; font-weight:900;">{{ region.name }}</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            style="width: 200px; font-size: 14px; font-weight:900;">
-                                            출력일자 {{ printed }}
-                                        </td>
-                                        <td
-                                            style="width: 200px; font-size: 14px; font-weight:900;">
-                                            490
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2"
-                                            style="height: 300px; font-size: 12px; vertical-middle: top;">
-{% for item in line_items %}
-{{ item }}<br>
-{% endfor %}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2"
-                                            style="font-size: 14px; font-weight: 500; text-align: right;">
-                                            1/532 총 1건
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2"
-                                            style="font-size: 14px; font-weight: 900;">
-                                            (주문번호 : {{ site_order_no }})
-                                        </td>
-                                    </tr>
-                                </table>
+                            <td class="tracking">운송장번호 {{ tracking_number }}</td>
+                            <td class="date">{{ print_date }}</td>
+                            <td class="count">{{ total_printed_count }}</td>
+                            <td class="service">택배이용문의 1588-1255</td>
+                        </tr>
+                    </table>
+                </td></tr>
+                <tr><td style="height:17mm;" class="section">
+                    <table class="routing">
+                        <tr>
+                            <td style="width:37mm; text-align:center;">
+                                {% autoescape %}<img class="barcode" src="{{ barcode|raw }}" />{% endautoescape %}<br>
+                                <span class="small">{{ tracking_number }}</span>
                             </td>
-                            <td>
-                                <table style="font-size:14px;">
-                                    <tr>
-                                        <td style="padding: 0 20px 15px 50px;">
-                                            {{ tracking_number }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 0 20px 15px 20px;">
-                                            {{ receiver.name }} {{ receiver.phone }}/{{ receiver.cell_phone }}<br>
-                                            {{ receiver.address }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 0 20px 0 20px;">
-                                            {{ seller.name }} / {{ seller.phone }} / {{ seller.site }}<br>
-                                            {{ seller.address }}
-                                        </td>
-                                    </tr>
-                                </table>
-                                <table>
-                                    <tr>
-                                        <td
-                                            style="padding: 10px; font-weight:900;">
-                                            <span
-                                                style="font-size: 26px;">고훈</span><br>
-                                            신용<br>
-                                            출력일자: 2020-10-06<br>
-                                            수량: 1 운임Type: A<br>
-                                            <div
-                                                style="padding: 50px 0 0 0; font-size:12px;">(주문번호
-                                                :
-                                                2722513774)</div>
-                                        </td>
-                                        <td
-                                            style="padding: 10px; text-align:center;">
-                                            <span
-                                                style="font-size:24px; font-weight: 900;">{{ city.code }}</span>
-                                            <span
-                                                style="font-size:20px; font-weight: 500; vertical-align: bottom;">{{ region.code }}A4901</span>
-{% autoescape %}
-<img src="{{ barcode|raw }}" />
-{% endautoescape %}
-<br>
-                                            <span
-                                                style="font-size: 14px; font-weight: 700;">{{ tracking_number }}</span><br>
-                                            490
-                                        </td>
-                                    </tr>
-                                </table>
-                                <table style="font-size:14px;">
-                                    <tr>
-                                        <td style="padding: 0 20px 15px 20px;">
-                                            {{ receiver.name }} {{ receiver.phone }}/{{ receiver.cell_phone }}<br>
-                                            {{ receiver.address }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            style="padding: 0 20px 0 20px; height: 100px; vertical-align: bottom;">
-                                            {{ seller.name }} / {{ seller.phone }} / {{ seller.site }}<br>
-                                        </td>
-                                    </tr>
-                                </table>
+                            <td style="width:65mm; text-align:center;">
+                                <span class="route-main">{{ city.code }}</span>
+                                <span class="route-sub">{{ region.code }}</span>
+                                <span class="diamond">◆</span><br>
+                                <span class="small">{{ city.name }} {{ region.name }}</span>
+                            </td>
+                            <td style="text-align:right; font-size:13pt; font-weight:bold;">P1</td>
+                        </tr>
+                    </table>
+                </td></tr>
+                <tr><td style="height:20mm;" class="section">
+                    <table class="contact">
+                        <tr>
+                            <td class="contact-label">받<br>는<br>분</td>
+                            <td class="contact-data">
+                                <div class="small">{{ receiver.phone }} / {{ receiver.cell_phone }}</div>
+                                <div class="recipient-name">{{ receiver.name }}</div>
+                                <div class="recipient-address">{{ receiver.address }}</div>
                             </td>
                         </tr>
                     </table>
-                </td>
-            </tr>
-        </table>
+                </td></tr>
+                <tr><td style="height:8mm;" class="section">
+                    <table class="contact">
+                        <tr>
+                            <td class="contact-label">보<br>내<br>는<br>분</td>
+                            <td class="contact-data">
+                                <strong>{{ seller.name }}</strong>
+                                <span class="small">{{ seller.phone }} / {{ seller.site }}</span><br>
+                                <span class="small">{{ seller.address }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td></tr>
+                <tr><td style="height:6mm; padding:0;" class="section">
+                    <table class="fields">
+                        <tr>
+                            <td>Box 수량<br>{{ box_quantity }}</td>
+                            <td>운임Type<br>{{ freight_type }}</td>
+                            <td>정산구분<br>{{ settlement_type }}</td>
+                            <td>배송담당<br>{{ delivery_worker }}</td>
+                        </tr>
+                    </table>
+                </td></tr>
+                <tr><td style="height:13mm;" class="section">
+                    <div class="small">상품정보</div>
+                    <div class="items">{% for item in line_items %}{{ item }}<br>{% endfor %}</div>
+                    <div class="small">주문번호: {{ site_order_no }}　출력일자: {{ printed }}</div>
+                </td></tr>
+                <tr><td style="height:6mm;" class="section">
+                    <div class="privacy">개인정보 유출 우려가 있으니 운송장은 폐기 바랍니다.</div>
+                </td></tr>
+                <tr><td style="height:11mm; padding:0 1.5mm;">
+                    <table class="footer-table">
+                        <tr>
+                            <td class="footer-code">CJ대한통운 - {{ region.code }}</td>
+                            <td style="width:37mm; text-align:right;">
+                                {% autoescape %}<img class="footer-barcode" src="{{ barcode|raw }}" />{% endautoescape %}<br>
+                                <span class="small">{{ tracking_number }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td></tr>
+            </table>
+        </div>
     </body>
 </html>

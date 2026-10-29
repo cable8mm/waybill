@@ -55,9 +55,9 @@ class Faker
      *
      * @example Faker::make()->barcode() a encoded barcode image like 'data:image/png;base64,...'
      */
-    public function barcode(): string
+    public function barcode(?string $value = null): string
     {
-        $barcode = (new TypeCode128)->getBarcode(self::shared()->ean13());
+        $barcode = (new TypeCode128)->getBarcode($value ?? self::shared()->ean13());
 
         $renderer = new PngRenderer;
 
