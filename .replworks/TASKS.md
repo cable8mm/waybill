@@ -1,0 +1,199 @@
+# TASKS
+
+- [x] T-001 Project foundation
+  - Satisfies: PRODUCT_SPEC.md Constraints
+  - External boundary: no
+  - Acceptance criteria:
+    - Every constraint in TECH_STACK.md is satisfied.
+    - Every check defined in TECH_STACK.md passes: package manifest validation, code style check, and the full test suite on every runtime version TECH_STACK.md lists.
+
+- [ ] T-002 Label format definition and page geometry
+  - Satisfies: PRODUCT_SPEC.md User Interface EL-026, EL-027, EL-028; Error Conditions ERR-002; Acceptance Criteria AC-024, AC-025, AC-026, AC-027
+  - External boundary: no
+  - Acceptance criteria:
+    - A label format created with a name, width, height, and four margins exposes those exact values; omitted margins equal 0.
+    - The CJ `5-inch` label format has name `5-inch`, width 123, height 100, and zero margins.
+    - A 123 x 100 label format yields page size `[100, 123]` and orientation `L`.
+    - A 100 x 150 label format yields page size `[100, 150]` and orientation `P`.
+    - A square label format yields orientation `P`.
+    - Creating a label format with an empty name raises an invalid-argument error (ERR-002).
+    - Creating a label format with width 0, negative width, height 0, or negative height raises an invalid-argument error (ERR-002).
+    - A label format value cannot be changed after creation (ARCHITECTURE.md AR-14).
+    - Unit tests for every criterion above pass.
+
+- [ ] T-003 Document creation for a label format
+  - Satisfies: PRODUCT_SPEC.md User Interface EL-025; Outputs page geometry; Constraints (Korean font rendering)
+  - External boundary: no
+  - Acceptance criteria:
+    - A document created with no label format produces pages of 123 x 100 mm landscape from the configuration defaults.
+    - A document created with a label format produces pages whose size and orientation match that label format.
+    - A document created with a label format uses that label format's margins and zero header and footer margins.
+    - A document created with any label format renders Korean text with the bundled fonts, observed as a PDF containing an embedded bundled font.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-004 CJ label data export
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-001, FR-003, FR-004, FR-008, FR-009, FR-010, FR-013, FR-014, FR-015; User Interface EL-002, EL-004, EL-006, EL-007; Acceptance Criteria AC-001, AC-003, AC-004, AC-007
+  - External boundary: no
+  - Acceptance criteria:
+    - Data export for the CJ provider without state returns all 15 CJ top-level keys (FR-001, AC-001).
+    - Two consecutive data exports without state return different `tracking_number` values (FR-003).
+    - Default `tracking_number` matches `####-####-####` with digits (FR-004).
+    - Default recipient name contains Hangul (FR-008).
+    - State key `'6' => 'new value'` appears in the export at key `'6'` (FR-009, FR-013, AC-003).
+    - State `seller => ['name' => 'X']` yields `seller` equal to `['name' => 'X']` (FR-010, AC-004).
+    - State `tracking_number => '5856-0852-8903'` yields `barcode` equal to the Code 128 PNG data URI of that value (FR-014, AC-007).
+    - State containing `barcode` yields `barcode` equal to the given value (FR-015).
+    - Setting state twice on one label keeps only the second state (EL-004).
+    - The label's format accessor returns the CJ `5-inch` label format when none was given (EL-007).
+    - Unit tests for every criterion above pass.
+
+- [ ] T-005 CJ single label PDF output
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-033, FR-034, FR-035, FR-036, FR-037, FR-038, FR-039, FR-041, FR-042; User Interface EL-001, EL-003, EL-005, EL-008, EL-009, EL-010, EL-011; Error Conditions ERR-003; Acceptance Criteria AC-009, AC-011, AC-012, AC-028, AC-029
+  - External boundary: no
+  - Acceptance criteria:
+    - Saving a CJ label with a directory path creates `<directory>/<filename>` (FR-033).
+    - Saving a CJ label without a directory path creates `<filename>` (FR-034).
+    - Saving without a filename creates `waybills.pdf`.
+    - The saved PDF has one page of 123 x 100 mm landscape (FR-036, AC-009).
+    - Downloading a CJ label writes non-empty PDF bytes to standard output (FR-035, AC-011).
+    - The rendered page text contains every supplied value for every CJ label field slot in PRODUCT_SPEC.md Inputs (FR-037).
+    - Each supplied `line_items` entry appears on its own line in the rendered page text (FR-038).
+    - The rendered page text contains `◆` (FR-039).
+    - Rendering a label twice into one document yields two pages (FR-041).
+    - Rendering a directly supplied record outputs that record's values without defaults or state (EL-010).
+    - String conversion of a CJ label returns `CJ택배` (FR-042, AC-012).
+    - A label created without a document, given a document, then saved creates a PDF file (AC-028).
+    - A label created without a document and saved without being given one raises an error and creates no file (ERR-003, AC-029).
+    - Every test that writes a PDF file removes it after assertion.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-006 Provider label format support enforcement
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-054, FR-055, FR-056, FR-057; Error Conditions ERR-001, ERR-008; Acceptance Criteria AC-022, AC-023
+  - External boundary: no
+  - Acceptance criteria:
+    - The CJ provider lists exactly `{5-inch}` and defaults to `5-inch` (EL-029).
+    - The Hanjin provider lists exactly `{NS, NL, FS}` with geometries 200 x 101.5, 101.5 x 100, 123 x 100 mm and defaults to `FS` (EL-029).
+    - A label created with no label format uses the provider's default label format (FR-057).
+    - A label format named `NS` with arbitrary dimensions is accepted by the Hanjin provider (FR-056).
+    - Saving a CJ label with label format `8-inch` raises an invalid-argument error and creates no file (FR-055, ERR-001, AC-022).
+    - Saving a Hanjin label with the CJ `5-inch` label format raises an invalid-argument error and creates no file (FR-055, ERR-001, AC-023).
+    - Creating a label with an unsupported label format raises no error until render (ARCHITECTURE.md AR-08).
+    - A provider whose template for a supported label format is missing raises an error on save and creates no file (ERR-008).
+    - Unit tests for every criterion above pass.
+
+- [ ] T-007 Hanjin label data export
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-002, FR-003, FR-005, FR-006, FR-007, FR-008, FR-009, FR-011, FR-012, FR-016, FR-017, FR-018; Error Conditions ERR-005; Acceptance Criteria AC-002, AC-006, AC-008
+  - External boundary: no
+  - Acceptance criteria:
+    - Data export for the Hanjin provider without state returns all 23 Hanjin top-level keys (FR-002, AC-002).
+    - Default `tracking_number` is 12 digits (FR-005).
+    - Default `terminal_code` is 4 digits (FR-006).
+    - Default `order_number` is `TEST-` followed by 6 digits (FR-007).
+    - State `receiver => ['name' => 'X']` yields a `receiver` that still contains `phone` and `address` (FR-012, AC-006).
+    - State `sender => ['phone' => '02-000-0000']` yields a `sender` that still contains `name` and `address` (FR-011).
+    - State `tracking_number => '123456789012'` yields `tracking_barcode` equal to the Interleaved 2 of 5 PNG data URI of that value (FR-016).
+    - State `terminal_code => '1234'` yields `terminal_barcode` equal to the Code 128 PNG data URI of that value (FR-017).
+    - State containing `tracking_barcode` or `terminal_barcode` yields that key equal to the given value (FR-018).
+    - State `tracking_number => 'AB12'` raises an invalid-character error on data export (ERR-005, AC-008).
+    - Unit tests for every criterion above pass.
+
+- [ ] T-008 Hanjin personal data masking
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-019, FR-020, FR-021, FR-022, FR-023, FR-024, FR-025, FR-026, FR-027, FR-028, FR-029, FR-030, FR-031, FR-032; Acceptance Criteria AC-005
+  - External boundary: no
+  - Acceptance criteria:
+    - State receiver `홍길동`, `010-1234-5678`, `서울특별시 강남구 테헤란로 123 4층` exports as `홍*동`, `010-1234-****`, `서울특별시 강남구 테헤란로 123 ****` (AC-005).
+    - Masking applies to `sender` and `receiver` in default data and in state data (FR-019).
+    - A 1-character name is unchanged (FR-020).
+    - Hangul names of 2, 3, 4, and 5 characters are masked per FR-021, FR-022, FR-023.
+    - Non-Hangul names of 2, 4, and 6 characters are masked per FR-024, FR-025.
+    - A phone with 3 digits has all digits masked (FR-027).
+    - An address with a word ending in `동` and no road name is masked per FR-029.
+    - An address matching neither road-name nor `읍`/`면`/`동` rules is masked per FR-030.
+    - The rendered Hanjin page text contains masked values and not the unmasked values.
+    - CJ data export with the same receiver values returns them unmasked (FR-031).
+    - Rendering a directly supplied Hanjin record outputs its unmasked values (FR-032).
+    - Unit tests for every criterion above pass.
+
+- [ ] T-009 Hanjin single label PDF output in NS, NL, and FS
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-036, FR-040, FR-042; Acceptance Criteria AC-010, AC-013
+  - External boundary: no
+  - Acceptance criteria:
+    - Saving a Hanjin label in `NS`, `NL`, and `FS` creates PDF pages of 200 x 101.5, 101.5 x 100, and 123 x 100 mm respectively (FR-036, AC-010).
+    - For each format, the rendered page text contains every supplied value for every Hanjin label field slot rendered on that format in PRODUCT_SPEC.md Inputs (FR-040).
+    - `group_rank` value appears on `NS` and `FS` and not on `NL`.
+    - `worker_name` and `worker_code` values appear on `NL` and `FS` and not on `NS`.
+    - Each rendered page contains two barcode images.
+    - String conversion of a Hanjin label returns `한진택배` (FR-042, AC-013).
+    - Every test that writes a PDF file removes it after assertion.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-010 Label list container
+  - Satisfies: PRODUCT_SPEC.md User Interface EL-019, EL-020, EL-021, EL-022
+  - External boundary: no
+  - Acceptance criteria:
+    - A label list created with N labels reports count N.
+    - Adding one label increases count by 1 and places it last.
+    - Adding a list of labels appends each in list order.
+    - Indexed read returns the label at that index.
+    - Indexed read of an absent index returns null.
+    - Indexed write replaces the label at that index.
+    - Append without index places the label last.
+    - Existence check returns true for a present index and false for an absent index.
+    - Removal by index makes that index absent.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-011 Collection data export
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-043, FR-044; User Interface EL-012, EL-013, EL-014; Acceptance Criteria AC-014, AC-015, AC-016
+  - External boundary: no
+  - Acceptance criteria:
+    - A collection of 1 label with repeat count 5 exports 5 records (AC-014).
+    - A collection of 3 labels with repeat count 5 exports 15 records (AC-015).
+    - Adding a list of 3 labels to an empty collection with repeat count 5 exports 15 records (FR-043, AC-016).
+    - Records are ordered by insertion order within each repeat pass.
+    - A collection created without labels exports an empty list.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-012 Collection PDF output
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-045, FR-046, FR-047, FR-048; User Interface EL-012, EL-015, EL-016, EL-017, EL-018; Error Conditions ERR-004; Acceptance Criteria AC-017, AC-018
+  - External boundary: no
+  - Acceptance criteria:
+    - A collection with 5 labels sharing its document saves a PDF with 5 pages to `<directory>/<filename>` (FR-045, AC-017).
+    - Pages appear in label insertion order, observed by distinct tracking numbers in page order.
+    - Downloading a collection with 1 label writes non-empty PDF bytes to standard output (FR-046, AC-018).
+    - A collection with 2 labels and repeat count 5 saves a PDF with 2 pages (FR-047).
+    - A label whose document differs from the collection's document contributes no page to the collection's PDF (FR-048).
+    - A collection created without a document produces 123 x 100 mm landscape pages (EL-012).
+    - Saving or downloading a collection created without a document raises an error and creates no file (ERR-004).
+    - A failure while rendering one label stops the save and propagates the error (ARCHITECTURE.md Failure Boundaries).
+    - Every test that writes a PDF file removes it after assertion.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-013 Page extraction
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-049, FR-050, FR-051, FR-052, FR-053; User Interface EL-023, EL-024; Error Conditions ERR-001, ERR-006, ERR-007; Acceptance Criteria AC-019, AC-020, AC-021
+  - External boundary: no
+  - Acceptance criteria:
+    - Extracting page 3 of a 5-page CJ PDF saves a one-page PDF at the given path (FR-049, AC-019).
+    - The extracted page size equals the extractor's label format geometry (FR-050).
+    - A CJ extraction places the source page at the CJ template area defined in FR-051.
+    - A Hanjin extraction of a Hanjin `NL` PDF places the source page at offset (0, 0) at the label format size (FR-052).
+    - Download writes non-empty PDF bytes to standard output named with the path's base name (FR-053, AC-020).
+    - Setting page 3 after creation with page 1 extracts page 3 (AC-021).
+    - Extracting with an unsupported label format raises an invalid-argument error and creates no file (ERR-001).
+    - Extracting before setting a source raises an error and creates no file (ERR-006).
+    - Extracting from a nonexistent source path raises an error and creates no file (ERR-007).
+    - Extracting a page number greater than the source page count raises an error and creates no file (ERR-007).
+    - Every test that writes a PDF file removes it after assertion.
+    - Unit tests for every criterion above pass.
+
+- [ ] T-014 User-supplied provider
+  - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-058; User Interface EL-030; User Flows UF-007; Acceptance Criteria AC-030
+  - External boundary: no
+  - Acceptance criteria:
+    - A test provider supplying all six provider capabilities, its own data producer, its own template, and its own label format saves a PDF whose page text contains the test provider's data values (AC-030).
+    - The saved page size equals the test provider's default label format geometry.
+    - String conversion of a label with the test provider returns the test provider's name.
+    - Data export with state for the test provider returns the test provider's merged record.
+    - A collection of labels with the test provider saves one page per label.
+    - Extraction with the test provider places the source page at the test provider's template area.
+    - Saving with a label format the test provider does not list raises the test provider's rejection error and creates no file.
+    - Unit tests for every criterion above pass.
