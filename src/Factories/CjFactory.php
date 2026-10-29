@@ -54,13 +54,20 @@ class CjFactory extends Factory
     }
 
     /**
-     * Keep the rendered barcode synchronized when a caller supplies a tracking number.
+     * Merge nested state key by key and keep the rendered barcode synchronized with the tracking number.
      *
      * @return array<string, mixed>
      */
     public function create(): array
     {
-        $record = parent::create();
+        $default = $this->definition();
+        $record = array_replace($default, $this->state);
+
+        foreach (['city', 'region', 'seller', 'receiver'] as $key) {
+            if (isset($this->state[$key]) && is_array($this->state[$key])) {
+                $record[$key] = array_replace($default[$key], $this->state[$key]);
+            }
+        }
 
         if (! array_key_exists('barcode', $this->state)) {
             $record['barcode'] = Faker::make()->barcode($record['tracking_number']);

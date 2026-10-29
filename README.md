@@ -111,10 +111,7 @@ Waybill::of(ParcelService::Cj)
     ->save('waybill.pdf');
 ```
 
-택배사마다 중첩 배열을 합치는 방식이 다릅니다.
-
-- CJ: `seller`, `receiver`처럼 배열로 된 필드는 넘긴 배열이 기본값 배열 전체를 대체합니다. 일부 키만 넘기면 나머지 키가 없어져 PDF를 만들 때 오류가 나므로, 위 예시처럼 모든 키를 함께 넘겨야 합니다.
-- 한진: `sender`, `receiver`는 넘긴 키만 바꾸고 나머지 키는 기본값을 유지합니다.
+배열로 된 필드는 넘긴 키만 바꾸고 나머지 키는 기본값을 유지합니다. CJ는 `seller`, `receiver`, `city`, `region`, 한진은 `sender`, `receiver`가 여기에 해당합니다.
 
 `state()`를 다시 호출하면 앞서 설정한 값은 모두 새 값으로 바뀝니다.
 
