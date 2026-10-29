@@ -169,7 +169,7 @@
     - Every test that writes a PDF file removes it after assertion.
     - Unit tests for every criterion above pass.
 
-- [ ] T-013 Page extraction
+- [x] T-013 Page extraction
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-049, FR-050, FR-051, FR-052, FR-053; User Interface EL-023, EL-024; Error Conditions ERR-001, ERR-006, ERR-007; Acceptance Criteria AC-019, AC-020, AC-021
   - External boundary: no
   - Acceptance criteria:

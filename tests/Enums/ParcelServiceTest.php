@@ -30,12 +30,6 @@ final class ParcelServiceTest extends TestCase
 
     public function test_template_area(): void
     {
-        $area = ParcelService::Cj->templateArea();
-
-        $this->assertCount(4, $area);
-        $this->assertIsInt($area[0]);
-        $this->assertIsInt($area[1]);
-        $this->assertIsInt($area[2]);
-        $this->assertIsInt($area[3]);
+        $this->assertSame([0, 0, 123.0, 100.0], ParcelService::Cj->templateArea());
     }
 }

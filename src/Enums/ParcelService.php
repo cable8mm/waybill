@@ -53,19 +53,17 @@ enum ParcelService: string implements WaybillProvider
      * Get the template area for slicing a specific waybill from a page
      *
      * Returns [offsetX, offsetY, width, height] in mm units.
-     * These values define the crop region when extracting a single waybill
-     * from a multi-waybill PDF page using mPDF's ImportPage + UseTemplate.
+     * These values define where an imported page is placed when extracting
+     * a single waybill from a multi-waybill PDF using mPDF's ImportPage + UseTemplate.
      *
-     * @return array{0: int, 1: int, 2: int, 3: int} The area as [offsetX, offsetY, width, height]
+     * @return array{0: int|float, 1: int|float, 2: int|float, 3: int|float} The area as [offsetX, offsetY, width, height]
      */
     public function templateArea(?LabelFormat $format = null): array
     {
-        $this->assertSupportedFormat($format ?? $this->defaultLabelFormat());
+        $format ??= $this->defaultLabelFormat();
+        $this->assertSupportedFormat($format);
 
-        return match ($this) {
-            // CJ waybill: offset (-40mm, -46mm), size 285mm x 196mm
-            self::Cj => [-40, -46, 285, 196],
-        };
+        return [0, 0, $format->width, $format->height];
     }
 
     /** @return array<string, LabelFormat> */
