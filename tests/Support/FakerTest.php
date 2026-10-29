@@ -27,4 +27,11 @@ final class FakerTest extends TestCase
 
         $this->assertIsString($value);
     }
+
+    public function test_interleaved_2_of_5_barcode(): void
+    {
+        $value = Faker::make()->interleaved2of5('123456789012');
+
+        $this->assertIsString($value);
+    }
 }

@@ -46,6 +46,8 @@ class Mpdf
                 'margin_right' => $format->marginRight,
                 'margin_top' => $format->marginTop,
                 'margin_bottom' => $format->marginBottom,
+                'margin_header' => 0,
+                'margin_footer' => 0,
             ];
         }
 

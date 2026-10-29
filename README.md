@@ -7,7 +7,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/cable8mm/waybill.svg)](https://packagist.org/packages/cable8mm/waybill)
 [![Packagist Stars](https://img.shields.io/packagist/stars/cable8mm/waybill)](https://github.com/cable8mm/waybill/stargazers)
 
-PHP로 PDF 운송장 레이아웃을 생성하는 라이브러리입니다. 기본 템플릿은 CJ대한통운 5인치 라벨 크기(123 × 100 mm)에 맞춰져 있으며, 바코드와 송신자/수신자 정보를 출력합니다.
+PHP로 PDF 운송장 레이아웃을 생성하는 라이브러리입니다. 기본 제공 양식은 CJ대한통운 5인치(123 × 100 mm)와 한진 NS·NL·FS이며, 바코드와 송신자/수신자 정보를 출력합니다.
 
 > 기본 Factory 데이터는 미리보기용 임의 데이터입니다. 이 패키지는 CJ대한통운에 배송을 접수하거나 운송장 번호·분류 코드를 발급하지 않습니다. 실제 배송에 사용하려면 CJ 또는 계약된 연동 솔루션에서 발급한 운송장 번호와 도착지/분류 코드를 `state()`로 전달하고, 사용 중인 계약 양식과 출력 위치를 확인해야 합니다. 운송장 번호를 전달하면 같은 번호를 바코드로 인코딩합니다. CJ 운송장 양식은 규격과 출력 프로그램에 따라 달라질 수 있습니다.
 
@@ -48,6 +48,28 @@ Waybill::of(ParcelService::Cj, format: LabelFormat::cj5Inch())
 ```
 
 기본 CJ provider는 현재 가이드에 근거한 5인치(123 × 100 mm)만 제공합니다. 다른 크기를 쓰려면 실제 양식에 맞는 템플릿과 규격을 provider에 함께 추가해야 합니다.
+
+### 한진택배 양식
+
+한진 provider는 공식 가이드의 NS, NL, FS 형식과 각 양식의 샘플 데이터/바코드를 제공합니다. 크기 선택은 명시적으로 합니다:
+
+```php
+use Cable8mm\Waybill\Providers\HanjinProvider;
+use Cable8mm\Waybill\Waybill;
+
+$hanjin = new HanjinProvider;
+
+Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::NS])
+    ->save('hanjin-ns.pdf');
+
+Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::NL])
+    ->save('hanjin-nl.pdf');
+
+Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::FS])
+    ->save('hanjin-fs.pdf');
+```
+
+NS/NL/FS printer media dimensions and their tolerances come from [PlayAuto's Hanjin print settings](https://www.plto.com/customer/HelpDesc/gmp/13789). Their W/H values can be rotated by printer drivers; these templates follow the orientation shown in Hanjin's [official layout guide](https://developers.hanjin.com/printwbl). Hanjin sample data masks names, phone numbers, and detailed addresses according to the guide. The package does not book shipments or issue carrier tracking/routing data.
 
 운송장 데이터를 배열로 가져오기 (API 응답 또는 CSV 내보내기용):
 

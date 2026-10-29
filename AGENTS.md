@@ -4,7 +4,7 @@ This document helps AI agents understand the structure and architecture of the `
 
 ## Project Overview
 
-A PHP library that generates PDF waybills. Carrier-specific data and templates are supplied by `WaybillProvider`; physical page dimensions are supplied separately by `LabelFormat`. CJ Logistics 5-inch is the only built-in provider/format today.
+A PHP library that generates PDF waybills. Carrier-specific data and templates are supplied by `WaybillProvider`; physical page dimensions are supplied separately by `LabelFormat`. Built-in formats are CJ Logistics 5-inch and Hanjin NS, NL, and FS.
 
 - **Namespace root**: `Cable8mm\Waybill`
 - **PHP version**: ^8.2
@@ -29,7 +29,10 @@ waybill/
 │   │   └── ParcelService.php    # Built-in providers (currently CJ)
 │   ├── Factories/
 │   │   ├── Factory.php          # Abstract factory (definition + state + create pattern)
-│   │   └── CjFactory.php        # CJ Logistics implementation
+│   │   ├── CjFactory.php        # CJ Logistics implementation
+│   │   └── HanjinFactory.php    # Hanjin sample shipment data and barcodes
+│   ├── Providers/
+│   │   └── HanjinProvider.php   # Hanjin NS/NL/FS provider
 │   ├── Support/
 │   │   ├── Faker.php            # Faker wrapper for Korean locale data
 │   │   ├── LabelFormat.php      # Physical label dimensions in mm
@@ -38,7 +41,11 @@ waybill/
 ├── stubs/
 │   └── Cj.stub                  # CJ waybill Twig template
 ├── fonts/
-│   └── NanumBarunGothic.ttf     # Korean font
+│   ├── NanumBarunGothic.ttf     # CJ Korean font
+│   ├── NanumGothic-Regular.ttf  # Hanjin-specified Korean font
+│   ├── NanumGothic-Bold.ttf     # Hanjin-specified bold font
+│   ├── NanumGothic-README.md    # Font source and attribution
+│   └── NanumGothic-OFL.txt      # Nanum Gothic license
 ├── config.php                   # mPDF settings (font, paper, margins, watermark)
 └── tests/
     └── fixtures/
@@ -208,7 +215,10 @@ Fields returned by `definition()`:
 - Automatically registers Korean font (NanumBarunGothic)
 - Applies watermark, font, paper settings
 - The bundled CJ preview uses a 123 × 100 mm landscape 5-inch `LabelFormat` with zero margins.
-- Hanjin NS/NL/FS official guide images are preserved under `tests/fixtures/hanjin/`; the fixture notes that NL's numeric height is not stated in the guide image.
+- Hanjin NS/NL/FS official guide images and masking instructions are preserved under `tests/fixtures/hanjin/`.
+- Hanjin media settings are 101.5 × 200 mm (NS), 101.5 × 100 mm (NL), and 100 × 123 mm (FS), ±5 mm. Templates use the orientation in Hanjin's layout examples (NS 200 × 101.5 mm; NL 101.5 × 100 mm; FS 123 × 100 mm); printer drivers may require swapping width and height.
+- `HanjinFactory` masks sender and receiver names, phone numbers, and detailed addresses per Hanjin's published masking guide. It generates illustrative sample tracking and routing codes only.
+- Hanjin templates use bundled Nanum Gothic Regular/Bold as required by the carrier guide; preserve its SIL Open Font License file.
 - Factory-generated tracking, routing, and recipient data is illustrative; it is not issued or validated by CJ Logistics.
 
 ### CJ 5-inch Template Scope

@@ -6,8 +6,10 @@ use Bezhanov\Faker\Provider\Commerce;
 use Bezhanov\Faker\Provider\Device;
 use Faker\Factory;
 use Faker\Generator;
+use Picqer\Barcode\Barcode;
 use Picqer\Barcode\Renderers\PngRenderer;
 use Picqer\Barcode\Types\TypeCode128;
+use Picqer\Barcode\Types\TypeInterleaved25;
 
 class Faker
 {
@@ -59,6 +61,19 @@ class Faker
     {
         $barcode = (new TypeCode128)->getBarcode($value ?? self::shared()->ean13());
 
+        return $this->renderBarcode($barcode);
+    }
+
+    /**
+     * Render a numeric Interleaved 2 of 5 barcode as a data URI.
+     */
+    public function interleaved2of5(string $value): string
+    {
+        return $this->renderBarcode((new TypeInterleaved25)->getBarcode($value));
+    }
+
+    private function renderBarcode(Barcode $barcode): string
+    {
         $renderer = new PngRenderer;
 
         return 'data:image/png;base64,'.base64_encode($renderer->render($barcode));
