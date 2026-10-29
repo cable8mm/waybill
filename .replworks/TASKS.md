@@ -48,7 +48,7 @@
     - The label's format accessor returns the CJ `5-inch` label format when none was given (EL-007).
     - Unit tests for every criterion above pass.
 
-- [ ] T-005 CJ single label PDF output
+- [x] T-005 CJ single label PDF output
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-033, FR-034, FR-035, FR-036, FR-037, FR-038, FR-039, FR-041, FR-042; User Interface EL-001, EL-003, EL-005, EL-008, EL-009, EL-010, EL-011; Error Conditions ERR-003; Acceptance Criteria AC-009, AC-011, AC-012, AC-028, AC-029
   - External boundary: no
   - Acceptance criteria:
