@@ -68,7 +68,7 @@
     - Every test that writes a PDF file removes it after assertion.
     - Unit tests for every criterion above pass.
 
-- [ ] T-006 Provider label format support enforcement
+- [x] T-006 Provider label format support enforcement
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-054, FR-055, FR-056, FR-057; Error Conditions ERR-001, ERR-008; Acceptance Criteria AC-022, AC-023
   - External boundary: no
   - Acceptance criteria:
