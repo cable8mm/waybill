@@ -31,7 +31,7 @@
     - A document created with any label format renders Korean text with the bundled fonts, observed as a PDF containing an embedded bundled font.
     - Unit tests for every criterion above pass.
 
-- [ ] T-004 CJ label data export
+- [x] T-004 CJ label data export
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-001, FR-003, FR-004, FR-008, FR-009, FR-010, FR-013, FR-014, FR-015; User Interface EL-002, EL-004, EL-006, EL-007; Acceptance Criteria AC-001, AC-003, AC-004, AC-007
   - External boundary: no
   - Acceptance criteria:
