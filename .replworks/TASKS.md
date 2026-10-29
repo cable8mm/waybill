@@ -154,7 +154,7 @@
     - A collection created without labels exports an empty list.
     - Unit tests for every criterion above pass.
 
-- [ ] T-012 Collection PDF output
+- [x] T-012 Collection PDF output
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-045, FR-046, FR-047, FR-048; User Interface EL-012, EL-015, EL-016, EL-017, EL-018; Error Conditions ERR-004; Acceptance Criteria AC-017, AC-018
   - External boundary: no
   - Acceptance criteria:
