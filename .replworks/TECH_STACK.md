@@ -4,7 +4,8 @@
 
 - PHP: `^8.2`.
 - Composer: dependency manager and autoloader.
-- PHP extensions: `mbstring`, `gd` (required transitively by mPDF and the barcode PNG renderer).
+- PHP extension `gd`: declared directly in `composer.json` (`ext-gd: *`) because the package renders PNG barcodes.
+- PHP extensions required only by dependencies (such as `mbstring` for mPDF and `zlib` for FPDI) MUST NOT be declared in `composer.json`.
 - mpdf/mpdf: `^8.0|^8.1`.
 - cable8mm/stub-template: `^1.0`.
 - fakerphp/faker: `^1.0`.
