@@ -1,5 +1,7 @@
 * text=auto eol=lf
 
+tests/fixtures/cj/*.pdf binary
+
 *.md diff=markdown
 *.php diff=php
 *.php.test diff=php

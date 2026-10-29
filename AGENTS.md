@@ -202,6 +202,15 @@ Fields returned by `definition()`:
 - Reads all settings from `config.php` to create mPDF instance
 - Automatically registers Korean font (NanumBarunGothic)
 - Applies watermark, font, paper settings
+- The bundled CJ preview uses a 123 × 100 mm landscape 5-inch label with zero margins.
+- Factory-generated tracking, routing, and recipient data is illustrative; it is not issued or validated by CJ Logistics.
+
+### CJ 5-inch Template Scope
+
+- `stubs/Cj.stub` follows the 123 × 100 mm 5-inch new-form example in `tests/fixtures/cj/cj-5inch-guide-2025-11-05.pdf`.
+- The guide is a 2025 reference. CJ changed routing-code output for 5-inch and 8-inch labels effective 2026-08-05; keep carrier-issued routing data dynamic and preserve the current `◆` marker.
+- A supplied `tracking_number` is encoded into the barcode unless the caller explicitly supplies a `barcode` image.
+- Real dispatch requires a CJ-issued tracking number and contract-specific routing data. The package does not reserve shipments or obtain those values.
 
 ### Faker (`src/Support/Faker.php`)
 

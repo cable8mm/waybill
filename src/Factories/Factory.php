@@ -7,7 +7,7 @@ abstract class Factory
     /**
      * Change key-value pairs in the definition
      */
-    private array $state = [];
+    protected array $state = [];
 
     /**
      * Define a factory definition for online mall companies

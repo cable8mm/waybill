@@ -2,13 +2,13 @@
 
 return [
     'mode' => 'utf-8',
-    'format' => [107.5, 206],
+    'format' => [100, 123],
     'default_font_size' => '12',
     'default_font' => 'nanumbarungothic',
-    'margin_left' => 10,
-    'margin_right' => 10,
-    'margin_top' => 10,
-    'margin_bottom' => 10,
+    'margin_left' => 0,
+    'margin_right' => 0,
+    'margin_top' => 0,
+    'margin_bottom' => 0,
     'margin_header' => 5,
     'margin_footer' => 0,
     'orientation' => 'L',
