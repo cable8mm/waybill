@@ -1,0 +1,63 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hanjin FS waybill</title>
+    <style>
+        @page { margin: 0; }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: nanumgothic, sans-serif; color: #000; }
+        table { border-collapse: collapse; }
+        .label { width: 123mm; height: 100mm; overflow: hidden; border: 0.25mm solid #000; }
+        .main { width: 100%; table-layout: fixed; }
+        .main td { padding: 0.6mm 1.2mm; border-bottom: 0.25mm solid #000; vertical-align: middle; }
+        .top { font-size: 8pt; font-weight: bold; }
+        .route { width: 100%; table-layout: fixed; }
+        .route td { padding: 0.3mm; border: 0; vertical-align: middle; }
+        .hub { width: 24mm; text-align: center; font-size: 13pt; font-weight: bold; }
+        .route-code { font-size: 22pt; font-weight: bold; }
+        .route-sub { font-size: 11pt; font-weight: bold; }
+        .terminal-barcode { width: 25mm; height: 8mm; }
+        .addresses { width: 100%; table-layout: fixed; }
+        .addresses td { width: 50%; padding: 0.8mm; border: 0; border-right: 0.25mm solid #000; vertical-align: top; }
+        .addresses td:last-child { border-right: 0; }
+        .who { font-size: 7pt; }
+        .person { font-size: 10pt; font-weight: bold; }
+        .address { font-size: 8pt; line-height: 1.1; }
+        .small { font-size: 7pt; }
+        .large { font-size: 12pt; font-weight: bold; }
+        .waybill-barcode { width: 52mm; height: 12mm; }
+    </style>
+</head>
+<body>
+<div class="label">
+    <table class="main">
+        <tr><td class="top">한진택배 <span style="float:right;">{{ print_date }}　운송장번호 {{ tracking_number }}</span></td></tr>
+        <tr><td style="padding:0.5mm;">
+            <table class="route"><tr>
+                <td class="hub">{{ hub_code }}<br>{{ hub_number }}</td>
+                <td style="width:26mm; text-align:center;">{% autoescape %}<img class="terminal-barcode" src="{{ terminal_barcode|raw }}" />{% endautoescape %}<br><span class="small">{{ terminal_code }}</span></td>
+                <td><span class="route-code">{{ center_code }}</span><span class="route-sub">　{{ middle_code }}　{{ center_name }}</span><br><span class="small">{{ terminal_name }}</span></td>
+                <td style="width:17mm; text-align:center;"><span class="large">{{ region_name }}</span><br><span class="small">{{ group_rank }}</span></td>
+            </tr></table>
+        </td></tr>
+        <tr><td style="padding:0;">
+            <table class="addresses"><tr>
+                <td><div class="who">받는 분　{{ receiver.phone }}</div><div class="person">{{ receiver.name }}</div><div class="address">{{ receiver.address }}</div></td>
+                <td><div class="who">보내는 분　{{ sender.phone }}</div><div class="person">{{ sender.name }}</div><div class="address">{{ sender.address }}</div></td>
+            </tr></table>
+        </td></tr>
+        <tr><td>
+            <table style="width:100%; table-layout:fixed;"><tr>
+                <td style="width:68%; vertical-align:top;"><div class="small">상품명 / 배송 요청사항</div><div class="large">{{ item_name }}　{{ item_quantity }}개</div><div>{{ delivery_request }}</div></td>
+                <td style="vertical-align:top;"><div class="small">운임</div><div class="large">{{ freight_type }}　{{ delivery_fee }}원</div><div class="small">주문번호 {{ order_number }}</div></td>
+            </tr></table>
+        </td></tr>
+        <tr><td style="text-align:center; border-bottom:0;">
+            <br><br><br><br>
+            {% autoescape %}<img class="waybill-barcode" src="{{ tracking_barcode|raw }}" />{% endautoescape %}<br>
+            <strong>{{ tracking_number }}　{{ worker_name }} {{ worker_code }}</strong>
+        </td></tr>
+    </table>
+</div>
+</body>
+</html>

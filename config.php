@@ -33,6 +33,12 @@ return [
             'I' => 'NanumBarunGothic.ttf',  // optional: italic font
             'BI' => 'NanumBarunGothic.ttf', // optional: bold-italic font
         ],
+        'nanumgothic' => [
+            'R' => 'NanumGothic-Regular.ttf',
+            'B' => 'NanumGothic-Bold.ttf',
+            'I' => 'NanumGothic-Regular.ttf',
+            'BI' => 'NanumGothic-Bold.ttf',
+        ],
     ],
     'auto_language_detection' => false,
     'temp_dir' => __DIR__.DIRECTORY_SEPARATOR.'tmp',

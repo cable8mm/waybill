@@ -7,7 +7,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/cable8mm/waybill.svg)](https://packagist.org/packages/cable8mm/waybill)
 [![Packagist Stars](https://img.shields.io/packagist/stars/cable8mm/waybill)](https://github.com/cable8mm/waybill/stargazers)
 
-PHP로 PDF 운송장 레이아웃을 생성하는 라이브러리입니다. 기본 템플릿은 CJ대한통운 5인치 라벨 크기(123 × 100 mm)에 맞춰져 있으며, 바코드와 송신자/수신자 정보를 출력합니다.
+PHP로 PDF 운송장 레이아웃을 생성하는 라이브러리입니다. 기본 제공 양식은 CJ대한통운 5인치(123 × 100 mm)와 한진 NS·NL·FS이며, 바코드와 송신자/수신자 정보를 출력합니다.
 
 > 기본 Factory 데이터는 미리보기용 임의 데이터입니다. 이 패키지는 CJ대한통운에 배송을 접수하거나 운송장 번호·분류 코드를 발급하지 않습니다. 실제 배송에 사용하려면 CJ 또는 계약된 연동 솔루션에서 발급한 운송장 번호와 도착지/분류 코드를 `state()`로 전달하고, 사용 중인 계약 양식과 출력 위치를 확인해야 합니다. 운송장 번호를 전달하면 같은 번호를 바코드로 인코딩합니다. CJ 운송장 양식은 규격과 출력 프로그램에 따라 달라질 수 있습니다.
 
@@ -35,6 +35,41 @@ Waybill::of(ParcelService::Cj)
     ->path(realpath(__DIR__.'/../dist'))
     ->save('test.pdf');
 ```
+
+`Waybill::of()`의 두 번째 인자로 PDF 인스턴스를 계속 전달할 수 있습니다. 용지 규격을 명시하려면 `LabelFormat`을 지정합니다. 같은 택배사도 계약 양식이나 프린터 매체에 따라 서로 다른 템플릿이 필요하므로, 해당 택배사 provider가 실제로 제공하는 규격만 선택할 수 있습니다.
+
+```php
+use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Support\LabelFormat;
+use Cable8mm\Waybill\Waybill;
+
+Waybill::of(ParcelService::Cj, format: LabelFormat::cj5Inch())
+    ->save('cj-5inch.pdf');
+```
+
+기본 CJ provider는 현재 가이드에 근거한 5인치(123 × 100 mm)만 제공합니다. 다른 크기를 쓰려면 실제 양식에 맞는 템플릿과 규격을 provider에 함께 추가해야 합니다.
+
+### 한진택배 양식
+
+한진 provider는 공식 가이드의 NS, NL, FS 형식과 각 양식의 샘플 데이터/바코드를 제공합니다. 크기 선택은 명시적으로 합니다:
+
+```php
+use Cable8mm\Waybill\Providers\HanjinProvider;
+use Cable8mm\Waybill\Waybill;
+
+$hanjin = new HanjinProvider;
+
+Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::NS])
+    ->save('hanjin-ns.pdf');
+
+Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::NL])
+    ->save('hanjin-nl.pdf');
+
+Waybill::of($hanjin, format: $hanjin->labelFormats()[HanjinProvider::FS])
+    ->save('hanjin-fs.pdf');
+```
+
+NS/NL/FS printer media dimensions and their tolerances come from [PlayAuto's Hanjin print settings](https://www.plto.com/customer/HelpDesc/gmp/13789). Their W/H values can be rotated by printer drivers; these templates follow the orientation shown in Hanjin's [official layout guide](https://developers.hanjin.com/printwbl). Hanjin sample data masks names, phone numbers, and detailed addresses according to the guide. The package does not book shipments or issue carrier tracking/routing data.
 
 운송장 데이터를 배열로 가져오기 (API 응답 또는 CSV 내보내기용):
 
@@ -142,14 +177,37 @@ return [
 ];
 ```
 
-### 택배사 추가하기 (커스터마이징)
+### 택배사와 규격 추가하기
 
-UPS 같은 새 택배사를 추가하려면 `Enum`과 `Factory` 클래스를 만들어야 합니다:
+택배사별 데이터 생성과 템플릿 선택은 `WaybillProvider` 계약으로 분리되어 있습니다. 새 택배사는 앱이나 패키지에서 이 인터페이스를 구현하고, `labelFormats()`에 지원하는 `LabelFormat` 목록을 반환합니다. `stub(LabelFormat)`은 해당 택배사와 규격 조합의 템플릿을 선택하며, `factoryClass()`는 택배사별 데이터를 생성합니다. `templateArea(LabelFormat)`은 PDF에서 송장을 잘라낼 때 사용할 영역입니다.
 
-1. `src/Factories/` 폴더에 `UpsFactory.php` 생성
-2. `src/Enums/ParcelService.php` Enum에 `Ups` 케이스 추가
-3. `factoryClass()`, `stub()`, `templateArea()` 메서드 구현
-4. PDF 레이아웃을 위한 `stubs/Ups.stub` 파일 생성
+아래는 provider가 맡는 메서드를 보여주는 축약 예시입니다. 템플릿 경로와 자르기 영역은 실제 택배사 양식에 맞춰 구현해야 합니다.
+
+```php
+use Cable8mm\Waybill\Contracts\WaybillProvider;
+use Cable8mm\Waybill\Support\LabelFormat;
+
+final class ExampleCarrier implements WaybillProvider
+{
+    public function factoryClass(): string { return ExampleFactory::class; }
+
+    public function labelFormats(): array
+    {
+        return ['example-5inch' => new LabelFormat('example-5inch', 123, 100)];
+    }
+
+    public function defaultLabelFormat(): LabelFormat
+    {
+        return $this->labelFormats()['example-5inch'];
+    }
+
+    public function stub(LabelFormat $format): string { /* resolve carrier + format template */ }
+    public function templateArea(LabelFormat $format): array { /* crop area in mm */ }
+    public function name(): string { return 'Example Carrier'; }
+}
+```
+
+`Waybill::of(new ExampleCarrier())`로 기본 규격을 쓰거나, `Waybill::of(new ExampleCarrier(), format: $format)`으로 해당 provider에 등록된 다른 규격을 선택합니다. 기존 `ParcelService::Cj` enum은 `WaybillProvider`를 구현하므로 기존 호출 코드는 유지됩니다. 현재 PDF 하나에 서로 다른 용지 크기의 송장을 섞는 기능은 지원하지 않으므로 컬렉션의 모든 송장은 같은 `LabelFormat`을 사용해야 합니다.
 
 ### 테스트
 

@@ -1,6 +1,8 @@
 * text=auto eol=lf
 
 tests/fixtures/cj/*.pdf binary
+tests/fixtures/hanjin/*.jpg binary
+tests/fixtures/hanjin/*.png binary
 
 *.md diff=markdown
 *.php diff=php

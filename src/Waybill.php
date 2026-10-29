@@ -3,7 +3,8 @@
 namespace Cable8mm\Waybill;
 
 use Cable8mm\StubTemplate\Stub;
-use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Contracts\WaybillProvider;
+use Cable8mm\Waybill\Support\LabelFormat;
 use Cable8mm\Waybill\Support\Mpdf as SupportMpdf;
 use Mpdf\Mpdf;
 
@@ -27,9 +28,10 @@ class Waybill
      */
     private function __construct(
         /**
-         * ParcelService instance
+         * Carrier-specific provider
          */
-        private ParcelService $parcelService,
+        private WaybillProvider $parcelService,
+        private LabelFormat $format,
         /**
          * Mpdf instance
          */
@@ -57,7 +59,7 @@ class Waybill
 
         $this->mpdf->WriteHTML(
             Stub::of(
-                $this->parcelService->stub(),
+                $this->parcelService->stub($this->format),
                 $data
             )->render()
         );
@@ -121,6 +123,12 @@ class Waybill
             ->state($this->state)->create();
     }
 
+    /** Get the physical label format used by this waybill. */
+    public function format(): LabelFormat
+    {
+        return $this->format;
+    }
+
     /**
      * Save the waybills data to PDF
      *
@@ -160,7 +168,7 @@ class Waybill
      */
     public function __toString()
     {
-        return $this->parcelService->value;
+        return $this->parcelService->name();
     }
 
     /**
@@ -171,11 +179,12 @@ class Waybill
      *
      * @example Waybill::of(ParcelService::Cj, $mpdf)->...
      */
-    public static function of(ParcelService $parcelService, ?Mpdf $mpdf = null): static
+    public static function of(WaybillProvider $parcelService, ?Mpdf $mpdf = null, ?LabelFormat $format = null): static
     {
-        $mpdf = $mpdf ?? SupportMpdf::instance();
+        $format = $format ?? $parcelService->defaultLabelFormat();
+        $mpdf = $mpdf ?? SupportMpdf::instance($format);
 
-        return new static($parcelService, $mpdf);
+        return new static($parcelService, $format, $mpdf);
     }
 
     /**
@@ -186,8 +195,8 @@ class Waybill
      *
      * @example Waybill::make(ParcelService::Cj)->make($mpdf)->...
      */
-    public static function make(ParcelService $parcelService): static
+    public static function make(WaybillProvider $parcelService, ?LabelFormat $format = null): static
     {
-        return new static($parcelService);
+        return new static($parcelService, $format ?? $parcelService->defaultLabelFormat());
     }
 }
