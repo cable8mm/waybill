@@ -128,7 +128,7 @@
     - Every test that writes a PDF file removes it after assertion.
     - Unit tests for every criterion above pass.
 
-- [ ] T-010 Label list container
+- [x] T-010 Label list container
   - Satisfies: PRODUCT_SPEC.md User Interface EL-019, EL-020, EL-021, EL-022
   - External boundary: no
   - Acceptance criteria:
