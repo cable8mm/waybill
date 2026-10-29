@@ -58,12 +58,12 @@ class HanjinFactory extends Factory
      */
     public function create(): array
     {
-        $record = $this->definition();
-        $record = array_replace($record, $this->state);
+        $default = $this->definition();
+        $record = array_replace($default, $this->state);
 
         foreach (['sender', 'receiver'] as $side) {
             if (isset($this->state[$side]) && is_array($this->state[$side])) {
-                $record[$side] = array_replace($record[$side], $this->state[$side]);
+                $record[$side] = array_replace($default[$side], $this->state[$side]);
             }
         }
 

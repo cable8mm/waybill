@@ -82,7 +82,7 @@
     - A provider whose template for a supported label format is missing raises an error on save and creates no file (ERR-008).
     - Unit tests for every criterion above pass.
 
-- [ ] T-007 Hanjin label data export
+- [x] T-007 Hanjin label data export
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-002, FR-003, FR-005, FR-006, FR-007, FR-008, FR-009, FR-011, FR-012, FR-016, FR-017, FR-018; Error Conditions ERR-005; Acceptance Criteria AC-002, AC-006, AC-008
   - External boundary: no
   - Acceptance criteria:
