@@ -21,7 +21,7 @@
     - A label format value cannot be changed after creation (ARCHITECTURE.md AR-14).
     - Unit tests for every criterion above pass.
 
-- [ ] T-003 Document creation for a label format
+- [x] T-003 Document creation for a label format
   - Satisfies: PRODUCT_SPEC.md User Interface EL-025; Outputs page geometry; Constraints (Korean font rendering)
   - External boundary: no
   - Acceptance criteria:
