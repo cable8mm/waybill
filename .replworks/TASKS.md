@@ -115,7 +115,7 @@
     - Rendering a directly supplied Hanjin record outputs its unmasked values (FR-032).
     - Unit tests for every criterion above pass.
 
-- [ ] T-009 Hanjin single label PDF output in NS, NL, and FS
+- [x] T-009 Hanjin single label PDF output in NS, NL, and FS
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-036, FR-040, FR-042; Acceptance Criteria AC-010, AC-013
   - External boundary: no
   - Acceptance criteria:
