@@ -40,7 +40,8 @@
     - Default `tracking_number` matches `####-####-####` with digits (FR-004).
     - Default recipient name contains Hangul (FR-008).
     - State key `'6' => 'new value'` appears in the export at key `'6'` (FR-009, FR-013, AC-003).
-    - State `seller => ['name' => 'X']` yields `seller` equal to `['name' => 'X']` (FR-010, AC-004).
+    - State `seller => ['name' => 'X']` yields `seller` with `name` equal to `X` and still containing `phone`, `site`, and `address` (FR-010, AC-004).
+    - State `receiver => ['name' => 'X']` saved as a PDF renders without error (FR-010).
     - State `tracking_number => '5856-0852-8903'` yields `barcode` equal to the Code 128 PNG data URI of that value (FR-014, AC-007).
     - State containing `barcode` yields `barcode` equal to the given value (FR-015).
     - Setting state twice on one label keeps only the second state (EL-004).
@@ -174,7 +175,7 @@
   - Acceptance criteria:
     - Extracting page 3 of a 5-page CJ PDF saves a one-page PDF at the given path (FR-049, AC-019).
     - The extracted page size equals the extractor's label format geometry (FR-050).
-    - A CJ extraction places the source page at the CJ template area defined in FR-051.
+    - A CJ extraction of a CJ `5-inch` PDF places the source page at offset (0, 0) at the label format size (FR-051).
     - A Hanjin extraction of a Hanjin `NL` PDF places the source page at offset (0, 0) at the label format size (FR-052).
     - Download writes non-empty PDF bytes to standard output named with the path's base name (FR-053, AC-020).
     - Setting page 3 after creation with page 1 extracts page 3 (AC-021).

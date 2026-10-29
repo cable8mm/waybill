@@ -258,7 +258,7 @@
 - FR-007: Hanjin default `order_number` MUST be `TEST-` followed by 6 digits.
 - FR-008: Default names, addresses, phone numbers, and company names MUST be Korean-locale values.
 - FR-009: For every provider, each top-level key present in the state MUST replace the default value of that key.
-- FR-010: For `ParcelService::Cj`, a nested array given in the state for a key MUST replace the entire default nested array for that key.
+- FR-010: For `ParcelService::Cj`, keys given in the state under `seller`, `receiver`, `city`, or `region` MUST replace only those keys of the corresponding default nested array.
 - FR-011: For `HanjinProvider`, keys given in the state under `sender` MUST replace only those keys of the default `sender` array.
 - FR-012: For `HanjinProvider`, keys given in the state under `receiver` MUST replace only those keys of the default `receiver` array.
 - FR-013: State keys that are not label fields MUST appear in the label data array with the given value.
@@ -311,7 +311,7 @@
 
 - FR-049: EL-024 `save(path)` MUST write a one-page PDF to the given path containing the selected page of the source PDF.
 - FR-050: The sliced PDF page size MUST equal the extractor's label format geometry.
-- FR-051: The selected page MUST be placed at the provider's template area: `ParcelService::Cj` places it at offset (-40 mm, -46 mm) scaled to 285 x 196 mm.
+- FR-051: The selected page MUST be placed at the provider's template area: `ParcelService::Cj` places it at offset (0, 0) scaled to the label format width and height.
 - FR-052: The selected page MUST be placed at the provider's template area: `HanjinProvider` places it at offset (0, 0) scaled to the label format width and height.
 - FR-053: EL-024 `download(path)` MUST emit the sliced PDF as a PDF download named with the base name of the path.
 
@@ -388,7 +388,7 @@
 - AC-001: EL-006 for `ParcelService::Cj` returns all 15 top-level CJ keys (FR-001).
 - AC-002: EL-006 for `HanjinProvider` returns all 23 top-level Hanjin keys (FR-002).
 - AC-003: EL-004 with `['6' => 'new value']` followed by EL-006 returns `'new value'` at key `'6'` (FR-009, FR-013).
-- AC-004: For `ParcelService::Cj`, EL-004 with `['seller' => ['name' => 'X']]` followed by EL-006 returns `seller` equal to `['name' => 'X']` (FR-010).
+- AC-004: For `ParcelService::Cj`, EL-004 with `['seller' => ['name' => 'X']]` followed by EL-006 returns `seller` with `name` equal to `X` and still containing `phone`, `site`, and `address` (FR-010).
 - AC-005: For `HanjinProvider`, EL-004 with `['receiver' => ['name' => '홍길동', 'phone' => '010-1234-5678', 'address' => '서울특별시 강남구 테헤란로 123 4층']]` followed by EL-006 returns `receiver` equal to `['name' => '홍*동', 'phone' => '010-1234-****', 'address' => '서울특별시 강남구 테헤란로 123 ****']` (FR-012, FR-021, FR-026, FR-028).
 - AC-006: For `HanjinProvider`, EL-004 with `['receiver' => ['name' => 'X']]` followed by EL-006 returns a `receiver` that still contains `phone` and `address` (FR-012).
 - AC-007: For `ParcelService::Cj`, EL-004 with `['tracking_number' => '5856-0852-8903']` followed by EL-006 returns `barcode` equal to the Code 128 PNG data URI of `5856-0852-8903` (FR-014).
