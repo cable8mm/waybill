@@ -143,7 +143,7 @@
     - Removal by index makes that index absent.
     - Unit tests for every criterion above pass.
 
-- [ ] T-011 Collection data export
+- [x] T-011 Collection data export
   - Satisfies: PRODUCT_SPEC.md Functional Requirements FR-043, FR-044; User Interface EL-012, EL-013, EL-014; Acceptance Criteria AC-014, AC-015, AC-016
   - External boundary: no
   - Acceptance criteria:
