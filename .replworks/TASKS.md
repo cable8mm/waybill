@@ -7,7 +7,7 @@
     - Every constraint in TECH_STACK.md is satisfied.
     - Every check defined in TECH_STACK.md passes: package manifest validation, code style check, and the full test suite on every runtime version TECH_STACK.md lists.
 
-- [ ] T-002 Label format definition and page geometry
+- [x] T-002 Label format definition and page geometry
   - Satisfies: PRODUCT_SPEC.md User Interface EL-026, EL-027, EL-028; Error Conditions ERR-002; Acceptance Criteria AC-024, AC-025, AC-026, AC-027
   - External boundary: no
   - Acceptance criteria:
