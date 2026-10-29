@@ -7,7 +7,7 @@ use Mpdf\Config\FontVariables;
 
 class Mpdf
 {
-    public static function instance(): \Mpdf\Mpdf
+    public static function instance(?LabelFormat $format = null): \Mpdf\Mpdf
     {
         $config = include __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'config.php';
 
@@ -39,7 +39,17 @@ class Mpdf
             'tempDir' => ($config['temp_dir']) ?: $tempDir,
         ];
 
-        $configMerge = array_merge($configGlobal, $config);
+        $labelOptions = $format?->mpdfOptions() ?? [];
+        if ($format !== null) {
+            $labelOptions += [
+                'margin_left' => $format->marginLeft,
+                'margin_right' => $format->marginRight,
+                'margin_top' => $format->marginTop,
+                'margin_bottom' => $format->marginBottom,
+            ];
+        }
+
+        $configMerge = array_merge($configGlobal, $config, $labelOptions);
 
         $mpdf = new \Mpdf\Mpdf(array_merge($defaultConfig, $configMerge));
 

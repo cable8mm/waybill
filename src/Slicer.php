@@ -2,7 +2,8 @@
 
 namespace Cable8mm\Waybill;
 
-use Cable8mm\Waybill\Enums\ParcelService;
+use Cable8mm\Waybill\Contracts\WaybillProvider;
+use Cable8mm\Waybill\Support\LabelFormat;
 use Cable8mm\Waybill\Support\Mpdf;
 use Mpdf\Output\Destination;
 
@@ -20,11 +21,12 @@ class Slicer
      * Constructor
      */
     private function __construct(
-        private ParcelService $parcelService,
+        private WaybillProvider $parcelService,
         /**
          * The page to slice the waybills
          */
-        private int $page
+        private int $page,
+        private LabelFormat $format
     ) {
         //
     }
@@ -35,7 +37,7 @@ class Slicer
      * @param  string  $source  The source to save the waybills
      * @return static The method returns self instance
      *
-     * @example $slicer = Slicer::of(ParcelService::Cj)->source(realpath(__DIR__.'/../dist'))->...
+     * @example $slicer = Slicer::of(ParcelService::Cj, 1)->source(realpath(__DIR__.'/../dist'))->...
      */
     public function source(string $source): static
     {
@@ -68,18 +70,19 @@ class Slicer
      */
     public function save(string $path, $destination = Destination::FILE): mixed
     {
-        $mpdf = Mpdf::instance();
+        $mpdf = Mpdf::instance($this->format);
 
         $mpdf->SetSourceFile($this->source);
 
         $tplId = $mpdf->ImportPage($this->page);
 
+        $area = $this->parcelService->templateArea($this->format);
         $mpdf->UseTemplate(
             $tplId,
-            $this->parcelService->templateArea()[0],
-            $this->parcelService->templateArea()[1],
-            $this->parcelService->templateArea()[2],
-            $this->parcelService->templateArea()[3]
+            $area[0],
+            $area[1],
+            $area[2],
+            $area[3]
         );
 
         return $destination == Destination::FILE
@@ -107,8 +110,8 @@ class Slicer
      *
      * @example Slicer::of(ParcelService::Cj, 1)->...
      */
-    public static function of(ParcelService $parcelService, int $page): static
+    public static function of(WaybillProvider $parcelService, int $page, ?LabelFormat $format = null): static
     {
-        return new static($parcelService, $page);
+        return new static($parcelService, $page, $format ?? $parcelService->defaultLabelFormat());
     }
 }

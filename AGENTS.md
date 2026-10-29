@@ -4,7 +4,7 @@ This document helps AI agents understand the structure and architecture of the `
 
 ## Project Overview
 
-A PHP library that generates PDF waybills for Korean courier services (CJ Logistics). Built with Factory + Enum patterns for easy extension to new parcel services.
+A PHP library that generates PDF waybills. Carrier-specific data and templates are supplied by `WaybillProvider`; physical page dimensions are supplied separately by `LabelFormat`. CJ Logistics 5-inch is the only built-in provider/format today.
 
 - **Namespace root**: `Cable8mm\Waybill`
 - **PHP version**: ^8.2
@@ -23,13 +23,16 @@ waybill/
 │   ├── Slicer.php               # Extract a single waybill from a PDF page
 │   ├── Collections/
 │   │   └── Waybills.php         # Waybill object container (ArrayAccess, Countable, IteratorAggregate)
+│   ├── Contracts/
+│   │   └── WaybillProvider.php  # Carrier-specific data/template contract
 │   ├── Enums/
-│   │   └── ParcelService.php    # Parcel service enum (core extension point)
+│   │   └── ParcelService.php    # Built-in providers (currently CJ)
 │   ├── Factories/
 │   │   ├── Factory.php          # Abstract factory (definition + state + create pattern)
 │   │   └── CjFactory.php        # CJ Logistics implementation
 │   ├── Support/
 │   │   ├── Faker.php            # Faker wrapper for Korean locale data
+│   │   ├── LabelFormat.php      # Physical label dimensions in mm
 │   │   └── Mpdf.php             # mPDF instance factory (includes Korean font config)
 │   └── ...
 ├── stubs/
@@ -38,6 +41,9 @@ waybill/
 │   └── NanumBarunGothic.ttf     # Korean font
 ├── config.php                   # mPDF settings (font, paper, margins, watermark)
 └── tests/
+    └── fixtures/
+        ├── cj/                    # CJ official 5-inch reference guide
+        └── hanjin/                # Hanjin NS/NL/FS guide images + source notes
 ```
 
 ## Architecture & Key Patterns
@@ -49,6 +55,7 @@ All major classes use static factory methods:
 ```php
 // of() — auto-creates all dependencies
 Waybill::of(ParcelService::Cj);
+Waybill::of(ParcelService::Cj, format: LabelFormat::cj5Inch());
 
 // make() — create instance without mpdf, inject later
 Waybill::make(ParcelService::Cj)->mpdf($mpdf);
@@ -65,15 +72,15 @@ Waybill::of(ParcelService::Cj)
     ->save('waybill.pdf');
 ```
 
-### 3. Enum + Factory Extension Pattern
+### 3. Provider + Factory Extension Pattern
 
-To add a new parcel service, modify 3 files:
+To add a new carrier, implement `WaybillProvider` in the application or package. Do not add carrier cases to `ParcelService` unless the provider is intended to ship as a built-in. Carrier and label size are separate: each provider lists supported `LabelFormat` values and selects a template for a requested format.
 
 | Step | File                              | Description                                    |
 | ---- | --------------------------------- | ---------------------------------------------- |
-| 1    | `src/Factories/{Name}Factory.php` | Extend `Factory`, implement `definition()`     |
-| 2    | `src/Enums/ParcelService.php`     | Add `case Name = 'value'`, implement 3 methods |
-| 3    | `stubs/{Name}.stub`               | Create Twig template                           |
+| 1    | `{Name}Factory.php` | Extend `Factory`, implement `definition()` |
+| 2    | `{Name}Provider.php` | Implement `WaybillProvider`, list only verified formats, resolve factory/template/crop area |
+| 3    | `{Name}-{format}.stub` | Create a template for each supported carrier/format combination |
 
 ### 4. State Pattern
 
@@ -110,8 +117,8 @@ $mpdf = new \Mpdf\Mpdf(); // ❌
 
 | Method                     | Description                         |
 | -------------------------- | ----------------------------------- |
-| `of(ParcelService, ?Mpdf)` | Static factory (auto-creates Mpdf)  |
-| `make(ParcelService)`      | Create instance without Mpdf        |
+| `of(WaybillProvider, ?Mpdf, ?LabelFormat)` | Static factory (auto-creates Mpdf for the chosen format) |
+| `make(WaybillProvider, ?LabelFormat)` | Create instance without Mpdf |
 | `mpdf(Mpdf)`               | Inject Mpdf instance                |
 | `state(array)`             | Set custom data                     |
 | `path(string)`             | Set save path                       |
@@ -137,31 +144,29 @@ $mpdf = new \Mpdf\Mpdf(); // ❌
 
 | Method                             | Description                       |
 | ---------------------------------- | --------------------------------- |
-| `of(ParcelService, int)`           | Static factory (with page number) |
+| `of(WaybillProvider, int, ?LabelFormat)` | Static factory (with page number and format) |
 | `source(string)`                   | Set source PDF path               |
 | `page(int)`                        | Set page number to extract        |
 | `save(string, Destination): mixed` | Save page                         |
 | `download(string): mixed`          | Download page                     |
 
-### ParcelService Enum (`src/Enums/ParcelService.php`)
+### WaybillProvider (`src/Contracts/WaybillProvider.php`)
 
 Methods to implement when adding a new service:
 
 ```php
-enum ParcelService: string
+interface WaybillProvider
 {
-    case Cj = 'CJ택배';
-
-    // Returns full namespace of the Factory class
     public function factoryClass(): string;
-
-    // Returns the stub file path
-    public function stub(): string;
-
-    // Returns crop region [offsetX, offsetY, width, height] for Slicer
-    public function templateArea(): array;
+    public function labelFormats(): array;
+    public function defaultLabelFormat(): LabelFormat;
+    public function stub(LabelFormat $format): string;
+    public function templateArea(LabelFormat $format): array;
+    public function name(): string;
 }
 ```
+
+`LabelFormat` stores physical width, height, and margins in millimetres and produces the corresponding mPDF page options. A provider must reject formats it does not support. Do not infer carrier formats from a generic inch name; use a carrier guide or approved sample.
 
 ### Factory Abstract Class (`src/Factories/Factory.php`)
 
@@ -202,7 +207,8 @@ Fields returned by `definition()`:
 - Reads all settings from `config.php` to create mPDF instance
 - Automatically registers Korean font (NanumBarunGothic)
 - Applies watermark, font, paper settings
-- The bundled CJ preview uses a 123 × 100 mm landscape 5-inch label with zero margins.
+- The bundled CJ preview uses a 123 × 100 mm landscape 5-inch `LabelFormat` with zero margins.
+- Hanjin NS/NL/FS official guide images are preserved under `tests/fixtures/hanjin/`; the fixture notes that NL's numeric height is not stated in the guide image.
 - Factory-generated tracking, routing, and recipient data is illustrative; it is not issued or validated by CJ Logistics.
 
 ### CJ 5-inch Template Scope
@@ -253,43 +259,11 @@ class UpsFactory extends Factory
 }
 ```
 
-### 2. Add enum case
+### 2. Implement a provider
 
-```php
-// src/Enums/ParcelService.php
-enum ParcelService: string
-{
-    case Cj = 'CJ택배';
-    case Ups = 'UPS';  // ADD
+Implement `WaybillProvider` in the package or consuming application. It owns the carrier factory and chooses a carrier/format-specific stub and crop area. Add verified formats to `labelFormats()`; do not infer support from a generic inch label.
 
-    public function factoryClass(): string
-    {
-        return match ($this) {
-            self::Cj => \Cable8mm\Waybill\Factories\CjFactory::class,
-            self::Ups => \Cable8mm\Waybill\Factories\UpsFactory::class,  // ADD
-        };
-    }
-
-    public function stub(): string
-    {
-        $stubPath = match ($this) {
-            self::Cj => realpath(...),
-            self::Ups => realpath(...),  // ADD
-        };
-        // ...
-    }
-
-    public function templateArea(): array
-    {
-        return match ($this) {
-            self::Cj => [-40, -46, 285, 196],
-            self::Ups => [0, 0, 210, 297],  // ADD (A4 size)
-        };
-    }
-}
-```
-
-### 3. Create stub template
+### 3. Create a stub template for each supported carrier/format combination
 
 ```twig
 {# stubs/Ups.stub #}
